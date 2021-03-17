@@ -1,0 +1,36 @@
+# Don't check auto-generated stuff into git
+coverage
+build
+node_modules
+stats.json
+dist/
+iframe-build/
+sdk-build/
+
+# Cruft
+.DS_Store
+npm-debug.log
+.idea
+
+# Yarn
+yarn-error.log
+.pnp/
+.pnp.js
+# Yarn Integrity file
+.yarn-integrity
+
+
+# Firebase cache
+.firebase
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# local env
+.env
+
+# dev config
+.vscode

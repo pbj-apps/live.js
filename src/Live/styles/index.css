@@ -1,0 +1,112 @@
+@import '~video.js/dist/video-js.css';
+@import 'overrides/videojs.css';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  height: 100%;
+}
+
+h1 {
+  margin: 0;
+  font-weight: 300;
+}
+
+#root {
+  background-color: #f7f7f7;
+  padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.loader {
+  width: 80px;
+  height: 80px;
+  margin-right: 10px;
+}
+
+.live-stream-end-screen, .live-empty-state-screen, .loader-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #F4F4F4;
+  color: #858585;
+}
+
+.no-content-text, .stream-ended-text, .loading-text {
+  font-size: 24px;
+  text-align: center;
+  margin: 10px auto;
+}
+
+.error-text {
+  word-wrap: break-word;
+  white-space: pre-wrap
+}
+
+.video-details {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s ease;
+  color: #fff;
+}
+
+.video-player {
+  position: relative;
+}
+
+.video-player:hover > .video-details{
+  opacity: 1;
+  visibility: visible;
+}
+
+.video-title {
+  margin: 20px 0 10px;
+  font-size: 1.5em;
+}
+
+.video-description {
+  margin: 10px 0;
+}
+
+.video-player-container, .video-player.data-vjs-player {
+  width: 100%;
+  height: 100%;
+}
+
+.video-player.data-vjs-player > .video-js.vjs-16-9, .video-js.vjs-4-3 {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.stream-preview-wrapper {
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  position: relative;
+}
+
+.stream-preview-image {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  object-fit: cover;
+  object-position: center;
+}
+
+.stream-preview-details {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}

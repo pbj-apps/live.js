@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Demo</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+  <div class='connect-wrapper'>
+    <div>
+      <labe for='org-key'>Organisation API key (*)</label>
+      <input id='api-key-input' name='org-key'/>
+    </div>
+    <div>
+      <label for='env'>Environment</label>
+      <input id='env-input' name='env'/>
+    </div>
+    <div>
+      <label for='show-id'>Show ID</label>
+      <input id='show-input' name='show-id'/>
+    </div>
+    <button id='connect-btn'>Submit</button>
+  </div>
+  <div id='embed-element' style='height: 100%'>
+  </div>
+  </script>
+  <style>
+    .connect-wrapper {
+      display: grid;
+      padding: 10px;
+      grid-gap: 10px;
+      width: 50%;
+    }
+  </style>
+</body>
+</html>

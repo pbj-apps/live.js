@@ -1,0 +1,101 @@
+# Javascript Node CircleCI 2.1 configuration file
+#
+# Check https://circleci.com/docs/2.1/language-javascript/ for more details
+#
+version: 2.1
+executors:
+  node-executor:
+    docker:
+      - image: circleci/node:15.0.1
+
+
+commands:
+  configure:
+    steps:
+      - run:
+          name: "Determine configuration"
+          command: |
+            BRANCH=$CIRCLE_BRANCH
+            if [ $BRANCH == "main" ];
+              then
+              # We use dev config for main
+              BRANCH="dev"
+              fi
+
+              BUILD_ENV_PATH="./build_config/${BRANCH}.env"
+              echo "Opening $BUILD_ENV_PATH .."
+
+              if [ -f $BUILD_ENV_PATH ];
+              then
+                export $(cat $BUILD_ENV_PATH | xargs)
+              else
+                echo "Cannot find branch info in $BRANCH, using default"
+                BUILD_ENV_PATH="./.env.sample"
+              fi
+
+            echo "export PBJ_FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID" >> $BASH_ENV
+            echo "export PBJ_ENV_PATH=$BUILD_ENV_PATH" >> $BASH_ENV
+
+            source $BASH_ENV
+
+            echo "Deploying to $PBJ_FIREBASE_PROJECT_ID"
+            echo "Env Path: $PBJ_ENV_PATH"
+
+  build:
+    steps:
+      - checkout
+      - configure
+      - restore_cache:
+          keys:
+            - yarn-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn
+      - run:
+          name: Linting
+          command: yarn lint
+      - save_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: "Copy over correct .env file"
+          command: cp "$PBJ_ENV_PATH" .env
+      - run:
+          name: Build
+          command: yarn build
+
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main
+
+jobs:
+  build:
+    executor: node-executor
+    working_directory: ~/repo
+    steps:
+      - build
+  deploy:
+    executor: node-executor
+    working_directory: ~/repo
+    steps:
+      - build
+      - run:
+          name: Install Firebase Tools
+          command: npm install firebase-tools
+      - run:
+          name: Use correct environment
+          command: ./node_modules/.bin/firebase use --add "$PBJ_FIREBASE_PROJECT_ID"
+      - run:
+          name: Deploy to Firebase
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
