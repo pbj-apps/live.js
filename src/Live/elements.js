@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 import LivePlayer from './Player';
 import EmbedPlayer from './EmbedPlayer';
 
@@ -14,6 +16,16 @@ class Elements {
     this.currentShowPreview = this.getCurrentShowPreview;
     this.episode = null;
     this.broadcast = null;
+    this.featuredProducts = this.getFeaturedProducts;
+    this.vod = {
+      getItems: this.getVodItems.bind(this),
+      getVideos: this.getVideos.bind(this),
+      getVideo: this.getVideo.bind(this),
+      getVideoFeaturedProducts: this.getVideoFeaturedProducts.bind(this),
+      getCategories: this.getCategories.bind(this),
+      getCategory: this.getCategory.bind(this),
+      getPlaylistInfo: this.getPlaylistInfo.bind(this),
+    };
     // this.chat = new LiveChat();
   }
 
@@ -52,12 +64,80 @@ class Elements {
     return this.live.episodes.showPreview({ showId });
   }
 
+  /**
+   * Get featured prodcuts;
+   */
+  getFeaturedProducts(episodeId) {
+    return this.live.episodes.featuredProducts({ episodeId });
+  }
+
   video(options) {
     return new LivePlayer(this.live, options);
   }
 
   embed(options) {
     return new EmbedPlayer(this.live, options);
+  }
+
+  async getVodItems({ params } = {}) {
+    return await this.live.vod
+      .items({ params })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  async getVideos({ params } = {}) {
+    return await this.live.vod
+      .videos({ params })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  async getVideo(videoId) {
+    if (isEmpty(videoId)) {
+      throw new Error('Video ID is missing.');
+    }
+    return await this.live.vod
+      .video(videoId)
+      .then((response) => response)
+      .catch((err) => err);
+  }
+
+  async getVideoFeaturedProducts({ params, videoId }) {
+    if (isEmpty(videoId)) {
+      throw new Error('Video ID is missing.');
+    }
+    return await this.live.vod
+      .videoFeaturedProducts({ params, videoId })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  async getCategories({ params } = {}) {
+    return await this.live.vod
+      .categories({ params })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  async getCategory(categoryId) {
+    if (isEmpty(categoryId)) {
+      throw new Error('Category ID is missing.');
+    }
+    return await this.live.vod
+      .category(categoryId)
+      .then((response) => response)
+      .catch((err) => err);
+  }
+
+  async getPlaylistInfo(playlistId) {
+    if (isEmpty(playlistId)) {
+      throw new Error('Playlist ID is missing.');
+    }
+    return await this.live.vod
+      .playlist(playlistId)
+      .then((response) => response)
+      .catch((err) => err);
   }
 }
 

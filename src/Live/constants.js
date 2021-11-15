@@ -6,6 +6,9 @@ export const socketCommandTypes = {
   EPISODE_STATUS_UPDATE: 'episode-status-update',
   JOIN_MUX_LIVESTREAM_WEBHOOK_UPDATES: 'join-mux-livestream-webhook-updates',
   LEAVE_MUX_LIVESTREAM_WEBHOOK_UPDATES: 'leave-mux-livestream-webhook-updates',
+  JOIN_EPISODE_FEATURED_PRODUCT_UPDATES:
+    'join-episode-featured-product-updates',
+  EPISODE_FEATURED_PRODUCT_UPDATES: 'episode-featured-product-updates',
 };
 
 export const episodeStatus = {

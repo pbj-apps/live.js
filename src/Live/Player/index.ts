@@ -1,5 +1,13 @@
 import videojs from 'video.js';
-import { isEmpty, toNumber, isUndefined, isNull } from 'lodash';
+import {
+  isEmpty,
+  toNumber,
+  isUndefined,
+  isNull,
+  differenceBy,
+  map,
+  join,
+} from 'lodash';
 import PlayerElement from './playerElement';
 import LoaderElement from './loaderElement';
 import streamEndedElement from './streamEndedElement';
@@ -19,6 +27,12 @@ import {
   ConfigOptions,
   PlayerInitiationOption,
 } from '../../common/types';
+import ProductElement from './components/FeaturedProductsContainer/product';
+import {
+  FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
+  PRODUCT_LIST_ELEMENT_ID,
+} from './components/FeaturedProductsContainer/constants';
+import OverlayContent from './components/OverlayContent';
 
 /**
  * Live Stream Player
@@ -120,6 +134,20 @@ class LivePlayer {
         this.state.broadcast = data;
         this.updatePlayer();
       });
+
+      // featch featured products for the episode.
+      this.live.elements
+        .featuredProducts(id)
+        .then(({ results }) => {
+          this.state.featuredProducts = results;
+          this.updatePlayer();
+        })
+        .catch((err) => {
+          console.log('err', err);
+        });
+
+      // Join Featuered Prodcuts Socket Updates
+      this.joinFeaturedProductsUpdates(id);
     }
   }
 
@@ -213,6 +241,70 @@ class LivePlayer {
     );
   }
 
+  /**
+   * Joins 'join-episode-featured-product-updates' socket event
+   * and subscribes to 'episode-featured-product-updates' event.
+   */
+  joinFeaturedProductsUpdates(episodeId) {
+    const socketMessage = JSON.stringify({
+      command: socketCommandTypes.JOIN_EPISODE_FEATURED_PRODUCT_UPDATES,
+      episode_id: episodeId,
+    });
+
+    this.live.sockets.send(socketMessage);
+    this.live.sockets.subscribeToEvent(
+      socketCommandTypes.EPISODE_FEATURED_PRODUCT_UPDATES,
+      (message) => {
+        const {
+          highlighted_featured_products: featuredProductsUpdate,
+        } = message;
+        const featuredProductsContainerElement = document.getElementById(
+          FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
+        );
+
+        if (
+          isEmpty(featuredProductsUpdate) &&
+          !featuredProductsContainerElement.hidden
+        ) {
+          featuredProductsContainerElement.hidden = true;
+        } else if (
+          !isEmpty(featuredProductsUpdate) &&
+          featuredProductsContainerElement.hidden
+        ) {
+          featuredProductsContainerElement.hidden = false;
+        }
+
+        const featuredProductsState = this.state.featuredProducts;
+        const unfeaturedProducts: [any] = differenceBy(
+          featuredProductsState,
+          featuredProductsUpdate,
+          'product.id',
+        );
+        const newFeaturedProducts: [any] = differenceBy(
+          featuredProductsUpdate,
+          featuredProductsState,
+          'product.id',
+        );
+        unfeaturedProducts.forEach(({ product: unfeaturedProduct }) => {
+          document.getElementById(`product-${unfeaturedProduct.id}`).remove();
+        });
+
+        if (!isEmpty(newFeaturedProducts)) {
+          document.getElementById(PRODUCT_LIST_ELEMENT_ID).insertAdjacentHTML(
+            'afterbegin',
+            join(
+              map(newFeaturedProducts, ({ product: featuredProduct }) =>
+                ProductElement(featuredProduct),
+              ),
+              '',
+            ),
+          );
+        }
+        this.state.featuredProducts = featuredProductsUpdate;
+      },
+    );
+  }
+
   updatePlayer() {
     if (this.state.loading) {
       this.containerElement.innerHTML = LoaderElement();
@@ -241,6 +333,12 @@ class LivePlayer {
   loadVideo() {
     const { broadcast_url: broadcastUrl } = this.state.broadcast;
     const player = videojs.getPlayer(this.playerElement);
+    player
+      .el()
+      .insertAdjacentHTML(
+        'afterBegin',
+        OverlayContent(this.state.episode, this.state.featuredProducts),
+      );
     this.player = player;
     player.src({
       src: broadcastUrl,
@@ -349,6 +447,7 @@ class LivePlayer {
       loading: false,
       episode: null,
       broadcast: null,
+      featuredProducts: null,
     };
   }
 }

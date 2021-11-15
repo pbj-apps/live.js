@@ -20,10 +20,17 @@ export interface WatchEndpoint {
   broadcast_url: string;
 }
 
+export interface FeaturedProduct {
+  id: string;
+  product: { [key: string]: any };
+  shop_type: string;
+}
+
 export interface LivePlayerState {
   episode: Episode | null;
   broadcast: WatchEndpoint | null;
   loading: boolean;
+  featuredProducts: FeaturedProduct[];
 }
 
 export interface PlayerInitiationOption {

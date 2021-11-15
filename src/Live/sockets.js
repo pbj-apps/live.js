@@ -57,6 +57,27 @@ class Sockets {
     }
     this.observers[command].subscribe(fn);
   }
+
+  // execuate callback when socket is ready.
+  waitForConnection(callback) {
+    if (this.ws.readyState === 1) {
+      callback();
+    } else {
+      setTimeout(() => {
+        this.waitForConnection(callback);
+      }, 500);
+    }
+  }
+
+  // send socket message only when socket is ready.
+  send(message, callback) {
+    this.waitForConnection(() => {
+      this.ws.send(message);
+      if (typeof callback !== 'undefined') {
+        callback();
+      }
+    });
+  }
 }
 
 export default Sockets;

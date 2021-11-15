@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 import Elements from './elements';
 import DataSource from './dataSource';
 import Auth from './auth';
@@ -18,6 +20,7 @@ class Live {
   episodes;
   auth: Auth;
   options: ConfigOptions;
+  vod;
 
   constructor(liveKey: string, givenOpts: ConfigOptions = {}) {
     this.key = liveKey;
@@ -50,15 +53,62 @@ class Live {
         method: 'GET',
       },
       activeShow: {
-        path: ({ showId }) => `episodes/current?show_id=${showId}`,
+        path: ({ showId }) => `episodes/current?channel_id=${showId}`,
         method: 'GET',
       },
       showPreview: {
-        path: ({ showId }) => `shows/${showId}/public`,
+        path: ({ showId }) => `channels/${showId}/public`,
         method: 'GET',
       },
       activeStreams: {
         path: `episodes/current`,
+        method: 'GET',
+      },
+      featuredProducts: {
+        path: ({ episodeId }) =>
+          `v1/shopping/episodes/${episodeId}/highlighted-featured-products`,
+        method: 'GET',
+      },
+    });
+    this.vod = this.dataSource.buildRepository({
+      items: {
+        path: ({ params }) =>
+          `vod/items${
+            isEmpty(params) ? '' : `?${new URLSearchParams(params).toString()}`
+          }`,
+        method: 'GET',
+      },
+      videos: {
+        path: ({ params }) =>
+          `vod/videos${
+            isEmpty(params) ? '' : `?${new URLSearchParams(params).toString()}`
+          }`,
+        method: 'GET',
+      },
+      video: {
+        path: (videoId) => `vod/videos/${videoId}`,
+        method: 'GET',
+      },
+      videoFeaturedProducts: {
+        path: ({ params, videoId }) =>
+          `v1/shopping/videos/${videoId}/featured-products${
+            isEmpty(params) ? '' : `?${new URLSearchParams(params).toString()}`
+          }`,
+        method: 'GET',
+      },
+      categories: {
+        path: ({ params }) =>
+          `vod/categories${
+            isEmpty(params) ? '' : `?${new URLSearchParams(params).toString()}`
+          }`,
+        method: 'GET',
+      },
+      category: {
+        path: (categoryId) => `vod/categories/${categoryId}`,
+        method: 'GET',
+      },
+      playlistInfo: {
+        path: (playlistId) => `vod/playlists/${playlistId}`,
         method: 'GET',
       },
     });
