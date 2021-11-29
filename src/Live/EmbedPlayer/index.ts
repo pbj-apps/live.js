@@ -23,7 +23,7 @@ class EmbedPlayer {
    * Mounts Live Player
    */
   mount(element: HTMLElement, options: any) {
-    const { showId } = options || {};
+    const { channelId } = options || {};
     const target = element;
 
     if (isNull(target)) {
@@ -41,7 +41,7 @@ class EmbedPlayer {
 
     this.iframeUrl =
       this.options.iframeUrl ||
-      `${iframeDomainOrigin}?api_key=${this.live.key}&environment=${this.live.options.environment}&show_id=${showId}`;
+      `${iframeDomainOrigin}?api_key=${this.live.key}&environment=${this.live.options.environment}&show_id=${channelId}`;
 
     this.playerOrigin = new URL(this.iframeUrl).origin;
 

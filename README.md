@@ -68,7 +68,10 @@ So in your html, add:
       var embedPlayer = live.elements.embed()
        
       // Mount the player to the div#live-element in our html
-      embedPlayer.mount("#live-element")
+      embedPlayer.mount("#live-element", {
+        // Channel ID should be passed within an object, i.e. the second parameter for the mount method.
+        channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+      })
     </script>
   </body>
 </html>
@@ -91,7 +94,10 @@ const LiveVideo = () => {
       var embedPlayer = live.elements.embed()
        
       // Mount the player to the div#live-element in our html
-      embedPlayer.mount("#live-element")
+      embedPlayer.mount("#live-element", {
+        // Channel ID should be passed within an object, i.e. the second parameter for the mount method.
+        channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+      })
   }, [])
 
   return <div id="live-element"><div/>
@@ -154,4 +160,135 @@ embedPlayer.openFullscreen()
 ```js
 videoElement.closeFullscreen()
 embedPlayer.closeFullscreen()
+```
+
+### VOD (Video on Demand) Element
+
+```js
+const vodElement = live.elements.vod;
+```
+This returns an object of serveral methods that can be used to get VOD Data.
+#### Note: Methods marked as "Paginated" accept "page" and "per_page" as optional fields within the params object.
+
+Sample method call for a paginated mehtod.
+```js
+const params = { per_page: 99, page: 1 };
+const vodItems = vodElement.getItems({params});
+```
+
+
+#### Get List of VOD Items (Paginated)
+
+```js
+const vodItems = vodElement.getItems();
+```
+
+The `vodElement.getItems` method will return a Promise that resolves to an array of Vod Items.
+
+This method along with pagination params, supports a `search` field in params object.
+
+```js
+const params = { per_page: 99, page: 1, search: 'vod' };
+const vodItems = vodElement.getItems({ params });
+```
+
+Note: Search filtering is present only on category, playlist and video titles and is case in-sensitive. 
+For example: To filter all vod items having category/video/playlist title with 'sample' in them, request should be:
+
+```js
+const params = { search: 'sample' };
+const vodItems = vodElement.getItems({ params });
+```
+### Get List of Videos (Paginated)
+
+```js
+const videos = vodElement.getVideos();
+```
+
+The `vodElement.getVideos` method will return a Promise that resolves to an array of Video objects.
+
+This method along with pagination params, supports a `search` field in params object.
+
+```js
+const params = { per_page: 99, page: 1, title: 'video' };
+const videos = vodElement.getVideos({ params });
+```
+
+Note: Search filtering is present only on title, description, featured product name and featured product category and is case in-sensitive. 
+For example: To filter all videos having title, description, featured product name or featured product category name with 'sample' in them, request should be:
+
+```js
+const params = { search: 'sample' };
+const videos = vodElement.getVideos({ params });
+```
+### Get Video
+
+```js
+const video = vodElement.getVideo(videoId);
+```
+
+The `vodElement.getVideo` method will return a Promise that resolves to an Video data object.
+
+This method accepts a required `videoId` parameter.
+
+```js
+const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
+const video = vodElement.getVideo(videoId);
+```
+### Get Video Featured Products (Paginated)
+
+```js
+const featuredProducts = vodElement.getVideoFeaturedProducts({ videoId });
+```
+
+The `vodElement.getVideoFeaturedProducts` method will return a Promise that resolves to an Video Featured Products data object.
+
+This methods accepts an object as its parameter with a required `videoId` field, along with the pagination `params` object.
+
+```js
+const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
+const params = { per_page: 99, page: 1 };
+const featuredProducts = vodElement.getVideoFeaturedProducts({ videoId, params });
+```
+### Get VOD Categories (Paginated)
+
+```js
+const categories = vodElement.getCategories();
+```
+
+The `vodElement.getCategories` method will return a Promise that resolves to an array of Category objects.
+
+This method along with pagination params, supports an optional `items_per_category` field in params object, which can help to include category items inside the response. The default for this field is `5`.
+
+```js
+const params = { per_page: 99, page: 1, items_per_category: 999 };
+const categories = vodElement.getCategories({ params });
+```
+### Get VOD Category
+
+```js
+const category = vodElement.getCategory(categoryId);
+```
+
+The `vodElement.getCategory` method will return a Promise that resolves to an Category data object.
+
+This method accepts a required `categoryId` parameter.
+
+```js
+const categoryId = 'df1904d3-7b75-4039-8bab-24e15ac2632f';
+const category = vodElement.getCategory(categoryId);
+```
+### Get Playlist Info
+
+```js
+const playlistInfo = vodElement.getPlaylistInfo(playlistId);
+```
+
+The `vodElement.getPlaylistInfo` method will return a Promise that resolves to an Playlist info data object.
+
+This method accepts a required `playlistId` parameter.
+
+```js
+const playlistId = 'ee6904d3-7b75-4039-8bab-24e15ac2632f';
+const playlistInfo = vodElement.getCategory(playlistId);
 ```

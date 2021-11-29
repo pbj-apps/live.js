@@ -1,6 +1,6 @@
 {
   "name": "@pbj/live.js",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "dist/sdk.js",
   "repository": {
     "type": "git",
