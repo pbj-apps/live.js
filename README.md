@@ -66,9 +66,9 @@ So in your html, add:
       
       // Create instance of the iframe embed
       var embedPlayer = live.elements.embed()
-       
+      var liveElement = document.getElementById('live-element');
       // Mount the player to the div#live-element in our html
-      embedPlayer.mount("#live-element", {
+      embedPlayer.mount(liveElement, {
         // Channel ID should be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
       })
