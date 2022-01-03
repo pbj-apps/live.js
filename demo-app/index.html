@@ -20,8 +20,8 @@
       <input id='env-input' name='env'/>
     </div>
     <div>
-      <label for='show-id'>Show ID</label>
-      <input id='show-input' name='show-id'/>
+      <label for='channel-id'>Channel ID</label>
+      <input id='channel-id-input' name='channel-id'/>
     </div>
     <button id='connect-btn'>Submit</button>
     <div id='exposed-vod-methods-div' hidden>
@@ -49,10 +49,19 @@
         <input id='playlist-id-input' name='Playlist-id'/>
         <button id='get-playlist-btn'>Get Playlist Info By Id</button>
       </div>
+      <div id='embed-vod-div'>
+        <label for='video-id-3-input'>Video ID</label>
+        <input id='video-id-3-input' name='video-id-3'/>
+        <button id='embed-vod-btn'>Embed vod video</button>
+      </div>
+      <div id='dispose-vod-div'>
+        <button id='dispose-vod-btn'>Dispose embeded vod</button>
+      </div>
     </div>
   </div>
   <div id='embed-element' style='height: 100%'>
   </div>
+  <div id='vod-embed-element' style='height: 100%'></div>
   </script>
   <style>
     .connect-wrapper {

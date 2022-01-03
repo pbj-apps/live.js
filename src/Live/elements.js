@@ -1,7 +1,8 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 
 import LivePlayer from './Player';
 import EmbedPlayer from './EmbedPlayer';
+import VodPlayer from './VodPlayer';
 
 /**
  * Live Elements
@@ -18,6 +19,7 @@ class Elements {
     this.broadcast = null;
     this.featuredProducts = this.getFeaturedProducts;
     this.vod = {
+      embed: this.embedVod.bind(this),
       getItems: this.getVodItems.bind(this),
       getVideos: this.getVideos.bind(this),
       getVideo: this.getVideo.bind(this),
@@ -77,6 +79,23 @@ class Elements {
 
   embed(options) {
     return new EmbedPlayer(this.live, options);
+  }
+
+  async embedVod({ containerElement, videoId, options }) {
+    if (isEmpty(videoId)) {
+      throw new Error('Video ID is missing.');
+    }
+    if (isNull(containerElement)) {
+      throw new Error('Container element is missing.');
+    }
+
+    const vodPlayer = new VodPlayer({
+      containerElement,
+      videoData: await this.getVideo(videoId),
+      options,
+    });
+
+    return vodPlayer;
   }
 
   async getVodItems({ params } = {}) {

@@ -3,17 +3,15 @@
  */
 export default function (data) {
   const {
-    description,
-    preview_image_url,
-    preview_url_type,
-    preview_video_url,
+    description: description,
+    preview_asset: { asset_type: assetType, asset_url: assetUrl, image },
     title,
   } = data;
 
-  if (preview_url_type === 'image') {
+  if (assetType === 'image') {
     return `
       <div class="stream-preview-wrapper">
-        <img src="${preview_image_url}" class="stream-preview-image">
+        <img src="${image.full_size}" class="stream-preview-image">
         </img>
         <div class="stream-preview-details">
           <h1>
@@ -26,7 +24,7 @@ export default function (data) {
   } else {
     return `
       <div class="stream-preview-wrapper">
-        <video src="${preview_video_url}" class="stream-preview-image" autoplay muted loop>
+        <video src="${assetUrl}" class="stream-preview-image" autoplay muted loop>
         </video>
         <div class="stream-preview-details">
           <h1>
