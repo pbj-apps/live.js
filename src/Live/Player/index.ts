@@ -162,7 +162,7 @@ class LivePlayer {
         } = message;
 
         if (!isNull(episode)) {
-          if (episode.show_id === showId) {
+          if (episode.channel_id === showId) {
             if (streamStatus === episodeStreamStatus.ACTIVE) {
               this.loadShow(showId);
             }

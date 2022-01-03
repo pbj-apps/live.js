@@ -66,10 +66,10 @@ So in your html, add:
       
       // Create instance of the iframe embed
       var embedPlayer = live.elements.embed()
-      var liveElement = document.getElementById('live-element');
+       
       // Mount the player to the div#live-element in our html
-      embedPlayer.mount(liveElement, {
-        // Channel ID should be passed within an object, i.e. the second parameter for the mount method.
+      embedPlayer.mount("#live-element", {
+        // (Optional) Channel ID can be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
       })
     </script>
@@ -95,7 +95,7 @@ const LiveVideo = () => {
        
       // Mount the player to the div#live-element in our html
       embedPlayer.mount("#live-element", {
-        // Channel ID should be passed within an object, i.e. the second parameter for the mount method.
+        // (Optional) Channel ID can be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
       })
   }, [])
@@ -167,7 +167,7 @@ embedPlayer.closeFullscreen()
 ```js
 const vodElement = live.elements.vod;
 ```
-This returns an object of serveral methods that can be used to get VOD Data.
+This returns an object of serveral methods that can be used to embed VOD Player and to get VOD Data.
 #### Note: Methods marked as "Paginated" accept "page" and "per_page" as optional fields within the params object.
 
 Sample method call for a paginated mehtod.
@@ -176,6 +176,31 @@ const params = { per_page: 99, page: 1 };
 const vodItems = vodElement.getItems({params});
 ```
 
+
+#### Embed VOD Player
+
+```js
+const vodPlayer = vodElement.embed(params);
+```
+The `vodElement.embed` method will mount a VOD player within a container element.
+
+This methods accepts a params object with required `containerElement` and `videoId` fields and returns an object of the VodPlayer.
+
+Within the main params object, it is possible to give an optional `options` object with a boolean field with key `closable`.
+If `closable === true`, a close/cross icon will be rendered on top of the VOD player which when clicked will call the `dispose` method of the VOD player.
+
+The `dispose` method can also be called using the `vodPlayer` object.
+
+```js
+const containerElement = document.getElementById('vod-container-element');
+const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
+const options = { closable = true };
+
+const vodPlayer = vodElement.embed({ containerElement, videoId, options });
+
+// To dispose the vodPlayer
+vodPlayer.dispose();
+```
 
 #### Get List of VOD Items (Paginated)
 

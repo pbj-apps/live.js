@@ -1,5 +1,5 @@
 function connect(apiKey, options) {
-  const { env, showId } = options || {};
+  const { env, channelId } = options || {};
   const Live = window.Live;
   const live = new Live(apiKey, {
     environment: env || 'dev',
@@ -7,7 +7,7 @@ function connect(apiKey, options) {
   const embedVideoPlayer = live.elements.embed();
   var el = document.getElementById('embed-element');
   embedVideoPlayer.mount(el, {
-    showId,
+    channelId,
   });
 
   document.getElementById('exposed-vod-methods-div').hidden = false;
@@ -87,15 +87,32 @@ function connect(apiKey, options) {
           return playlist;
         });
     });
+
+  document
+    .getElementById('embed-vod-btn')
+    .addEventListener('click', async function () {
+      const vodElement = document.getElementById('vod-embed-element');
+      const videoId = document.getElementById('video-id-3-input').value;
+      const player = await live.elements.vod.embed({
+        containerElement: vodElement,
+        videoId,
+        options: { closable: true },
+      });
+      document
+        .getElementById('dispose-vod-btn')
+        .addEventListener('click', async function () {
+          player.dispose();
+        });
+    });
 }
 
 document.getElementById('connect-btn').addEventListener('click', function () {
   document.getElementById('embed-element').innerHTML = '';
   const orgApiKey = document.getElementById('api-key-input').value;
   const env = document.getElementById('env-input').value;
-  const showId = document.getElementById('show-input').value;
+  const channelId = document.getElementById('channel-id-input').value;
   connect(orgApiKey, {
     env,
-    showId,
+    channelId,
   });
 });
