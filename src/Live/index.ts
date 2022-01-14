@@ -21,6 +21,7 @@ class Live {
   auth: Auth;
   options: ConfigOptions;
   vod;
+  shoppingCatalogue;
 
   constructor(liveKey: string, givenOpts: ConfigOptions = {}) {
     this.key = liveKey;
@@ -45,7 +46,7 @@ class Live {
         method: 'GET',
       },
       watch: {
-        path: ({ episode }) => `live-streams/${episode}/watch`,
+        path: ({ episode }) => `v1/episodes/${episode}/watch`,
         method: 'GET',
       },
       liveStream: {
@@ -89,6 +90,13 @@ class Live {
         path: (videoId) => `vod/videos/${videoId}`,
         method: 'GET',
       },
+      videoFeaturedProductsMeta: {
+        path: ({ params, videoId }) =>
+          `v1/shopping/videos/${videoId}/featured-products/meta${
+            isEmpty(params) ? '' : `?${new URLSearchParams(params).toString()}`
+          }`,
+        method: 'GET',
+      },
       videoFeaturedProducts: {
         path: ({ params, videoId }) =>
           `v1/shopping/videos/${videoId}/featured-products${
@@ -109,6 +117,13 @@ class Live {
       },
       playlistInfo: {
         path: (playlistId) => `vod/playlists/${playlistId}`,
+        method: 'GET',
+      },
+    });
+    this.shoppingCatalogue = this.dataSource.buildRepository({
+      productDetails: {
+        path: (productId) =>
+          `dashboard/shopping/catalogue/products/${productId}`,
         method: 'GET',
       },
     });

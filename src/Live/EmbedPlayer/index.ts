@@ -43,7 +43,7 @@ class EmbedPlayer {
       this.options.iframeUrl ||
       `${iframeDomainOrigin}?api_key=${this.live.key}&environment=${
         this.live.options.environment
-      }${channelId && `&showId=${channelId}`}`;
+      }${channelId && `&show_id=${channelId}`}`;
     this.playerOrigin = new URL(this.iframeUrl).origin;
 
     if (!this.iframe.src) {

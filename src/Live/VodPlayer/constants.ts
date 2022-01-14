@@ -10,3 +10,5 @@ export const VOD_PLAYER_OPTIONS = {
     remainingTimeDisplay: false,
   },
 };
+
+export const PRE_FETCH_VALUE = 0.5;

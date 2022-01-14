@@ -108,6 +108,11 @@ h1 {
   object-position: center;
 }
 
+.spinner-loader > svg {
+  height: 50px;
+  width: 50px;
+}
+
 .stream-preview-details {
   position: absolute;
   bottom: 10px;

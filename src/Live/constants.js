@@ -14,6 +14,7 @@ export const socketCommandTypes = {
 export const episodeStatus = {
   ACTIVE: 'active',
   FINISHED: 'finished',
+  BROADCASTING: 'broadcasting',
 };
 
 export const episodeStreamStatus = {

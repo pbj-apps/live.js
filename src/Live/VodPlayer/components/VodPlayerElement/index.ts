@@ -1,5 +1,7 @@
 import { isEmpty } from 'lodash';
-import { formatDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
+
+import featuredProductsContainer from '../../../Player/components/FeaturedProductsContainer';
 
 /**
  * Mounts VOD Player element template
@@ -17,6 +19,7 @@ export default function (vodData) {
           <video id="vod-player-video-element" class="video-js vjs-16-9 vjs-big-play-centered"
           playsInline="true"></video>
           <div class="vod-overlay-content-container"></div>
+          ${featuredProductsContainer(null)}
       </div>
       <div class="video-cover">
         ${
@@ -24,9 +27,9 @@ export default function (vodData) {
           `<img src=${thumbnailImage} alt="${title}" />`
         }
         <div class="cover-container">
-          <span class="duration">${formatDuration({
-            seconds: duration,
-          })}</span>
+          <span class="duration">${formatDuration(
+            intervalToDuration({ start: 0, end: duration * 1000 }),
+          )}</span>
         </div>
         <button type="button" class="play-button">
           <svg width="17" height="18" viewBox="0 0 17 18" xmlns="http://www.w3.org/2000/svg">

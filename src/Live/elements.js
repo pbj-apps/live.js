@@ -93,6 +93,7 @@ class Elements {
       containerElement,
       videoData: await this.getVideo(videoId),
       options,
+      liveInstance: this.live,
     });
 
     return vodPlayer;
@@ -118,6 +119,26 @@ class Elements {
     }
     return await this.live.vod
       .video(videoId)
+      .then((response) => response)
+      .catch((err) => err);
+  }
+
+  async getVideoFeaturedProductsMeta({ params, videoId }) {
+    if (isEmpty(videoId)) {
+      throw new Error('Video ID is missing.');
+    }
+    return await this.live.vod
+      .videoFeaturedProductsMeta({ params, videoId })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  async getProductDetails(productId) {
+    if (isEmpty(productId)) {
+      throw new Error('Product ID is missing.');
+    }
+    return await this.live.shoppingCatalogue
+      .productDetails(productId)
       .then((response) => response)
       .catch((err) => err);
   }

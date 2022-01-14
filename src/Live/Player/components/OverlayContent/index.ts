@@ -1,4 +1,4 @@
-import featuredProdcutsContainer from '../FeaturedProductsContainer/featuredProdcutsContainer';
+import featuredProductsContainer from '../FeaturedProductsContainer';
 
 /**
  * Mounts Video Overlay element template
@@ -27,7 +27,7 @@ export default function (episode, featuredProducts): string {
           <h3 class="video-title">${show && show.title}</h3>
           <p class="video-description">${show && show.description}</p>
         </div>
-        ${featuredProdcutsContainer(featuredProducts)}
+        ${featuredProductsContainer(featuredProducts)}
       </div>
         `;
 }

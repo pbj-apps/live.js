@@ -7,6 +7,7 @@ import {
   differenceBy,
   map,
   join,
+  isEqual,
 } from 'lodash';
 import PlayerElement from './playerElement';
 import LoaderElement from './loaderElement';
@@ -15,7 +16,12 @@ import streamEmptyStateElement from './streamEmptyStateElement';
 import streamPreviewElement from './streamPreviewElement';
 import errorElement from './errorElement';
 
-import { VIDEOJS_SELECTOR, PLAYER_OPTIONS, PLAYER_EVENTS } from './constants';
+import {
+  VIDEOJS_SELECTOR,
+  PLAYER_OPTIONS,
+  PLAYER_EVENTS,
+  STREAM_TYPES,
+} from './constants';
 import {
   socketCommandTypes,
   episodeStatus,
@@ -33,6 +39,7 @@ import {
   PRODUCT_LIST_ELEMENT_ID,
 } from './components/FeaturedProductsContainer/constants';
 import OverlayContent from './components/OverlayContent';
+import { convertStringToSeconds } from '../../utils/duration';
 
 /**
  * Live Stream Player
@@ -99,10 +106,16 @@ class LivePlayer {
             });
         } else {
           if (count >= 1) {
-            const { stream_status: streamStatus } = results[0];
+            const {
+              stream_status: streamStatus,
+              pre_recorded_video: preRecordedVideo,
+            } = results[0];
             this.state.loading = false;
-            // initiate broadcast only if the stream status is active.
-            if (streamStatus === episodeStreamStatus.ACTIVE) {
+            // initiate broadcast only if the stream status is active or vod is attached.
+            if (
+              preRecordedVideo ||
+              streamStatus === episodeStreamStatus.ACTIVE
+            ) {
               this.state.episode = results[0];
               // Don't run updatePlayer() but start initiateBroadcast instead and wait until loaded.
               this.initiateBroadcast();
@@ -129,6 +142,7 @@ class LivePlayer {
   initiateBroadcast() {
     if (!isEmpty(this.state.episode)) {
       const { id } = this.state.episode;
+
       this.watchPromise = this.live.episodes.watch({ episode: id });
       this.watchPromise.then((data: WatchEndpoint) => {
         this.state.broadcast = data;
@@ -163,7 +177,7 @@ class LivePlayer {
 
         if (!isNull(episode)) {
           if (episode.channel_id === showId) {
-            if (streamStatus === episodeStreamStatus.ACTIVE) {
+            if (episode.status === episodeStatus.BROADCASTING) {
               this.loadShow(showId);
             }
           }
@@ -189,10 +203,13 @@ class LivePlayer {
       .then((data) => {
         const { count, results } = data;
         if (count >= 1) {
-          const { stream_status: streamStatus } = results[0];
+          const {
+            stream_status: streamStatus,
+            pre_recorded_video: preRecordedVideo,
+          } = results[0];
           this.state.loading = false;
-          // initiate broadcast only if the stream status is active.
-          if (streamStatus === episodeStreamStatus.ACTIVE) {
+          // initiate broadcast only if the stream status is active or there is a vod attached.
+          if (preRecordedVideo || streamStatus === episodeStreamStatus.ACTIVE) {
             this.state.episode = results[0];
             // Don't run updatePlayer() but start initiateBroadcast instead and wait until loaded.
             this.initiateBroadcast();
@@ -235,6 +252,9 @@ class LivePlayer {
           isNull(this.state.episode) &&
           streamStatus === episodeStreamStatus.ACTIVE
         ) {
+          this.loadActiveStreams();
+        } else if (episode.status === episodeStatus.BROADCASTING) {
+          this.state.episode = episode;
           this.loadActiveStreams();
         }
       },
@@ -331,7 +351,11 @@ class LivePlayer {
    * Loads Video URL
    */
   loadVideo() {
-    const { broadcast_url: broadcastUrl } = this.state.broadcast;
+    const {
+      broadcast_url: broadcastUrl,
+      elapsed_time: elapsedTime,
+      stream_type: streamType,
+    } = this.state.broadcast;
     const player = videojs.getPlayer(this.playerElement);
     player
       .el()
@@ -342,10 +366,15 @@ class LivePlayer {
     this.player = player;
     player.src({
       src: broadcastUrl,
-      type: 'application/x-mpegURL',
       withCredentials: false,
     });
     player.play();
+    if (
+      !isEmpty(elapsedTime) &&
+      isEqual(streamType, STREAM_TYPES.PRE_RECORDED_LIVE_STREAM)
+    ) {
+      player.currentTime(convertStringToSeconds(elapsedTime));
+    }
     player.on(PLAYER_EVENTS.ENDED, () => {
       this.endScreen(this.containerElement);
     });

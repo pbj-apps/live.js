@@ -18,6 +18,8 @@ export interface Episode {
 
 export interface WatchEndpoint {
   broadcast_url: string;
+  elapsed_time: string;
+  stream_type: string;
 }
 
 export interface FeaturedProduct {

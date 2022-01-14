@@ -24,3 +24,7 @@ export const PLAYER_OPTIONS = {
 export const PLAYER_EVENTS = {
   ENDED: 'ended',
 };
+
+export const STREAM_TYPES = {
+  PRE_RECORDED_LIVE_STREAM: 'pre_recorded_live_stream',
+};
