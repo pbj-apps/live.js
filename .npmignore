@@ -1,0 +1,6 @@
+coverage
+.circleci
+.nvmrc
+.prettierignore
+.prettierrc
+babel.config.json
