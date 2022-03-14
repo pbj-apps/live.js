@@ -1,5 +1,6 @@
 @import '~video.js/dist/video-js.css';
 @import 'overrides/videojs.css';
+@import './shopify.css';
 
 html,
 body {
@@ -154,6 +155,7 @@ h1 {
   overflow: hidden;
   align-items: center;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .product-wrapper:focus {
@@ -213,7 +215,10 @@ h1 {
 
 #minimize-products-checkbox:checked
   + #featured-products-container
-  #product-list {
+  #product-list,
+#minimize-products-checkbox:checked
+  + #featured-products-container
+  .shopify-bag {
   transform: translate3d(360px, 0, 0);
 }
 
@@ -393,7 +398,10 @@ h1 {
 
   #minimize-products-checkbox:checked
     + #featured-products-container
-    #product-list {
+    #product-list,
+  #minimize-products-checkbox:checked
+    + #featured-products-container
+    .shopify-bag {
     transform: translate3d(120px, 0, 0);
   }
 

@@ -4,9 +4,7 @@ import {
   toNumber,
   isUndefined,
   isNull,
-  differenceBy,
-  map,
-  join,
+  replace,
   isEqual,
 } from 'lodash';
 import PlayerElement from './playerElement';
@@ -33,13 +31,10 @@ import {
   ConfigOptions,
   PlayerInitiationOption,
 } from '../../common/types';
-import ProductElement from './components/FeaturedProductsContainer/product';
-import {
-  FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
-  PRODUCT_LIST_ELEMENT_ID,
-} from './components/FeaturedProductsContainer/constants';
+import { FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID } from './components/FeaturedProductsContainer/constants';
 import OverlayContent from './components/OverlayContent';
 import { convertStringToSeconds } from '../../utils/duration';
+import FeaturedProducts from '../FeaturedProducts';
 
 /**
  * Live Stream Player
@@ -57,6 +52,7 @@ class LivePlayer {
   options: ConfigOptions;
   watchPromise: Promise<WatchEndpoint> | null;
   state: LivePlayerState;
+  featuredProductsInstance: FeaturedProducts;
 
   constructor(liveInstance, options) {
     this.live = liveInstance;
@@ -261,6 +257,24 @@ class LivePlayer {
     );
   }
 
+  async initializeFeaturedProducts(products) {
+    const featuredProductsContainerElement = document.getElementById(
+      FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
+    );
+    const { shop_url: domain, access_token: storefrontAccessToken } =
+      (await this.live.elements.getShopifyConfig()) || {};
+
+    this.featuredProductsInstance = new FeaturedProducts({
+      playerContainerElement: this.containerElement,
+      featuredProductsContainerElement,
+      products,
+      shopifyStoreDetails: {
+        domain: replace(domain, 'https://', ''),
+        storefrontAccessToken,
+      },
+    });
+  }
+
   /**
    * Joins 'join-episode-featured-product-updates' socket event
    * and subscribes to 'episode-featured-product-updates' event.
@@ -278,48 +292,13 @@ class LivePlayer {
         const {
           highlighted_featured_products: featuredProductsUpdate,
         } = message;
-        const featuredProductsContainerElement = document.getElementById(
-          FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
-        );
 
-        if (
-          isEmpty(featuredProductsUpdate) &&
-          !featuredProductsContainerElement.hidden
-        ) {
-          featuredProductsContainerElement.hidden = true;
-        } else if (
-          !isEmpty(featuredProductsUpdate) &&
-          featuredProductsContainerElement.hidden
-        ) {
-          featuredProductsContainerElement.hidden = false;
+        if (isEmpty(this.featuredProductsInstance)) {
+          this.initializeFeaturedProducts(featuredProductsUpdate);
+        } else {
+          this.featuredProductsInstance.updateProducts(featuredProductsUpdate);
         }
 
-        const featuredProductsState = this.state.featuredProducts;
-        const unfeaturedProducts: [any] = differenceBy(
-          featuredProductsState,
-          featuredProductsUpdate,
-          'product.id',
-        );
-        const newFeaturedProducts: [any] = differenceBy(
-          featuredProductsUpdate,
-          featuredProductsState,
-          'product.id',
-        );
-        unfeaturedProducts.forEach(({ product: unfeaturedProduct }) => {
-          document.getElementById(`product-${unfeaturedProduct.id}`).remove();
-        });
-
-        if (!isEmpty(newFeaturedProducts)) {
-          document.getElementById(PRODUCT_LIST_ELEMENT_ID).insertAdjacentHTML(
-            'afterbegin',
-            join(
-              map(newFeaturedProducts, ({ product: featuredProduct }) =>
-                ProductElement(featuredProduct),
-              ),
-              '',
-            ),
-          );
-        }
         this.state.featuredProducts = featuredProductsUpdate;
       },
     );
@@ -359,10 +338,12 @@ class LivePlayer {
     const player = videojs.getPlayer(this.playerElement);
     player
       .el()
-      .insertAdjacentHTML(
-        'afterBegin',
-        OverlayContent(this.state.episode, this.state.featuredProducts),
-      );
+      .insertAdjacentHTML('afterBegin', OverlayContent(this.state.episode));
+
+    if (!isEmpty(this.state.featuredProducts)) {
+      this.initializeFeaturedProducts(this.state.featuredProducts);
+    }
+
     this.player = player;
     player.src({
       src: broadcastUrl,

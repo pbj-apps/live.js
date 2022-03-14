@@ -5,7 +5,7 @@ import featuredProductsContainer from '../FeaturedProductsContainer';
  * @param {Object} episode episode data for title/description
  * @param {Object} featuredProducts data for current episode.
  */
-export default function (episode, featuredProducts): string {
+export default function (episode): string {
   const { show } = episode;
   return `<div class="video-overlay-content">
         <div class="video-details">
@@ -27,7 +27,7 @@ export default function (episode, featuredProducts): string {
           <h3 class="video-title">${show && show.title}</h3>
           <p class="video-description">${show && show.description}</p>
         </div>
-        ${featuredProductsContainer(featuredProducts)}
+        ${featuredProductsContainer()}
       </div>
         `;
 }

@@ -150,7 +150,10 @@ class VodPlayer {
   renderProduct(product): void {
     document
       .getElementById(PRODUCT_LIST_ELEMENT_ID)
-      .insertAdjacentHTML('afterbegin', ProductElement(product));
+      .insertAdjacentHTML(
+        'afterbegin',
+        ProductElement({ product, useUrl: true }),
+      );
   }
 
   renderProductLoader(loaderId: string): void {

@@ -38,3 +38,8 @@ export interface LivePlayerState {
 export interface PlayerInitiationOption {
   episode?: Episode;
 }
+
+export interface ShopifyConfigType {
+  domain: string;
+  storefrontAccessToken: string;
+}

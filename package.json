@@ -1,6 +1,6 @@
 {
   "name": "@pbj/live.js",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "dist/sdk.js",
   "repository": {
     "type": "git",
@@ -68,6 +68,7 @@
     "lint-staged": "^10.5.3",
     "lodash": "^4.17.20",
     "pre-commit": "^1.2.2",
+    "shopify-buy": "^2.14.0",
     "source-map-loader": "^2.0.0",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3"

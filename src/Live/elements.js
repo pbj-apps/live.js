@@ -179,6 +179,13 @@ class Elements {
       .then((response) => response)
       .catch((err) => err);
   }
+
+  async getShopifyConfig() {
+    return await this.live.shoppingCatalogue
+      .shopifyConfig()
+      .then((response) => response)
+      .catch((err) => err);
+  }
 }
 
 export default Elements;

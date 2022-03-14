@@ -19,7 +19,7 @@ export default function (vodData) {
           <video id="vod-player-video-element" class="video-js vjs-16-9 vjs-big-play-centered"
           playsInline="true"></video>
           <div class="vod-overlay-content-container"></div>
-          ${featuredProductsContainer(null)}
+          ${featuredProductsContainer()}
       </div>
       <div class="video-cover">
         ${

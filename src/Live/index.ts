@@ -126,6 +126,10 @@ class Live {
           `dashboard/shopping/catalogue/products/${productId}`,
         method: 'GET',
       },
+      shopifyConfig: {
+        path: 'integrations/shopify/storefront-access-token',
+        method: 'GET',
+      },
     });
     this.elements = new Elements(this);
   }

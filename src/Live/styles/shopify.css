@@ -1,0 +1,265 @@
+:root {
+  --blue-dark: #22174a;
+  --border-dark: #22174a33;
+  --fw-medium: 500;
+}
+
+.shop-product-details {
+  background-color: white;
+  color: black;
+  border-radius: 16px;
+  position: relative;
+}
+
+.shop-product-details .product-wrapper {
+  margin: 10px 10px 0;
+  border: none;
+  flex-direction: row-reverse;
+}
+
+.shop-product-details .product-wrapper .product-details {
+  padding: 0 20px 0 0;
+}
+
+.shop-product-details .close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
+  margin: 0;
+  width: 35px;
+  height: 35px;
+}
+
+.shopify-bag-button {
+  position: relative;
+  cursor: pointer;
+}
+
+.shopify-bag-button .items-count {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
+  transform: translate(-40%, 55%);
+  border-radius: 50%;
+  background: white;
+  color: black;
+}
+
+.shopify-bag {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: white;
+  height: 90%;
+  width: 400px;
+  overflow: hidden;
+  color: black;
+  border-radius: 16px;
+  transition: transform 0.35s ease-out;
+  will-change: transform;
+}
+
+.shopify-bag > div {
+  padding: 20px;
+  overflow-y: scroll;
+}
+
+.shopify-bag .back-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 0 20px auto;
+}
+
+.shopify-bag a {
+  display: flex;
+  justify-content: center;
+  padding: 22px;
+  color: white;
+  background: var(--blue-dark) !important;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: var(--fw-medium);
+}
+
+.shopify-item-container {
+  display: flex;
+}
+
+.shopify-item-container .item-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  margin: 5px 10px;
+}
+
+.shopify-item-container .product-details {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 0 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.shopify-item-container .title {
+  font-weight: var(--fw-medium);
+  font-size: 21px;
+  color: var(--blue-dark);
+}
+
+.shopify-item-container .price {
+  font-weight: var(--fw-medium);
+  font-size: 16px;
+  color: var(--blue-dark);
+}
+
+.shopify-item-container .quantity {
+  font-weight: var(--fw-medium);
+  font-size: 14px;
+}
+
+.shopify-item-container img {
+  max-width: 102px;
+  max-height: 102px;
+  border-radius: 6px;
+}
+
+.shopify-item-container .remove-item-button {
+  align-self: center;
+  margin: 0 6px 0 26px;
+  padding: 0;
+  width: 21px;
+  height: 21px;
+  cursor: pointer;
+}
+
+.remove-item-button svg {
+  width: 21px;
+  height: 21px;
+}
+
+.bag-total {
+  display: flex;
+  margin-top: 34px;
+  padding: 20px 0 13px;
+  justify-content: space-between;
+  color: var(--blue-dark);
+  font-size: 20px;
+  font-weight: var(--fw-medium);
+  border-top: 1px solid var(--border-dark);
+}
+
+.product-image-container {
+  position: relative;
+}
+
+.out-of-stock-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--blue-dark);
+  color: white;
+  text-align: center;
+  font-size: 15px;
+  font-weight: var(--fw-medium);
+  line-height: 35px;
+  border-radius: 0px 0px 6px 6px;
+}
+
+.shop-product-details form > div {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.shop-product-details form button {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+  background-color: var(--blue-dark) !important;
+  color: white;
+  font-size: 20px;
+  font-weight: var(--blue-dark);
+  padding: 22px;
+}
+
+.shop-product-details .select-wrapper {
+  display: inline-block;
+  width: max-content;
+  min-width: 40px;
+  padding: 11px;
+  border-radius: 10px;
+  background-color: var(--border-dark);
+  color: var(--blue-dark);
+}
+
+.shop-product-details select {
+  outline: none;
+  border: none;
+  font-size: 18px;
+  font-weight: var(--fw-medium);
+  text-align: center;
+  background: transparent;
+}
+
+.product-form-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-options-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.radio-options-container input {
+  display: none;
+}
+
+.radio-options-container label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  overflow: hidden;
+  border: 1px solid var(--border-dark);
+  padding: 5px;
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--blue-dark);
+  cursor: pointer;
+}
+
+.radio-options-container input[type='radio']:checked + label {
+  border: 1px solid var(--blue-dark);
+  cursor: pointer;
+}
+
+.radio-options-container input[type='radio']:disabled + label {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.variant-label {
+  margin: 12px 0;
+  font-size: 14px;
+  font-weight: var(--fw-medium);
+  line-height: 20px;
+  color: var(--blue-dark);
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  font-weight: var(--fw-medium);
+}
