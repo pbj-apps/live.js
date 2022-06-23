@@ -125,13 +125,13 @@ h1 {
   line-height: initial;
 }
 
-#featured-products-container {
+.featured-products-container {
   position: absolute;
   top: 20px;
   left: calc(100% - 430px);
   height: 85%;
   max-height: calc(100% - 100px);
-  max-width: 400px;
+  min-width: 400px;
   pointer-events: visible;
   z-index: 1000;
 }
@@ -392,17 +392,20 @@ h1 {
     display: block;
   }
 
-  #featured-products-container {
+  .featured-products-container {
     left: calc(100% - 150px);
+    min-width: initial;
+    max-width: 50vw;
   }
 
   #minimize-products-checkbox:checked
     + #featured-products-container
-    #product-list,
-  #minimize-products-checkbox:checked
-    + #featured-products-container
-    .shopify-bag {
+    #product-list {
     transform: translate3d(120px, 0, 0);
+  }
+
+  .featured-products-container.bag-open {
+    left: calc(100% - 50vw);
   }
 
   #minimize-products-checkbox:checked

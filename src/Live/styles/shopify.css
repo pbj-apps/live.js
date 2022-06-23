@@ -15,6 +15,7 @@
   margin: 10px 10px 0;
   border: none;
   flex-direction: row-reverse;
+  cursor: initial;
 }
 
 .shop-product-details .product-wrapper .product-details {
@@ -87,6 +88,7 @@
 
 .shopify-item-container {
   display: flex;
+  margin-bottom: 35px;
 }
 
 .shopify-item-container .item-details {
@@ -124,12 +126,6 @@
   font-size: 14px;
 }
 
-.shopify-item-container img {
-  max-width: 102px;
-  max-height: 102px;
-  border-radius: 6px;
-}
-
 .shopify-item-container .remove-item-button {
   align-self: center;
   margin: 0 6px 0 26px;
@@ -146,6 +142,7 @@
 
 .bag-total {
   display: flex;
+  flex-wrap: wrap;
   margin-top: 34px;
   padding: 20px 0 13px;
   justify-content: space-between;
@@ -262,4 +259,23 @@
   color: red;
   font-size: 14px;
   font-weight: var(--fw-medium);
+}
+
+@media screen and (max-width: 768px) {
+  .shopify-bag {
+    width: 100%;
+  }
+
+  .shopify-item-container {
+    flex-direction: column-reverse;
+  }
+
+  .remove-item-button {
+    margin: 0 0 10px !important;
+  }
+
+  .shop-product-details .product-wrapper {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
 }

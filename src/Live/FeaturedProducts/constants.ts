@@ -6,3 +6,4 @@ export const SHOPIFY_BAG_CLASS = 'shopify-bag';
 export const SHOPIFY_BAG_BUTTON_CLASS = 'shopify-bag-button';
 export const REMOVE_ITEM_BUTTON_CLASS = 'remove-item-button';
 export const SHOPIFY_BAG_BACK_BUTTON_CLASS = 'back-button';
+export const BAG_OPEN_CLASS = 'bag-open';

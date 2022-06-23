@@ -224,7 +224,7 @@ For example: To filter all vod items having category/video/playlist title with '
 const params = { search: 'sample' };
 const vodItems = vodElement.getItems({ params });
 ```
-### Get List of Videos (Paginated)
+### Get a list of Videos (Paginated)
 
 ```js
 const videos = vodElement.getVideos();
@@ -246,7 +246,7 @@ For example: To filter all videos having title, description, featured product na
 const params = { search: 'sample' };
 const videos = vodElement.getVideos({ params });
 ```
-### Get Video
+### Get a specific Video
 
 ```js
 const video = vodElement.getVideo(videoId);
@@ -259,8 +259,9 @@ This method accepts a required `videoId` parameter.
 ```js
 const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
 const video = vodElement.getVideo(videoId);
+
 ```
-### Get Video Featured Products (Paginated)
+### Get a Video's Featured Products (Paginated)
 
 ```js
 const featuredProducts = vodElement.getVideoFeaturedProducts({ videoId });
@@ -275,6 +276,25 @@ const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
 const params = { per_page: 99, page: 1 };
 const featuredProducts = vodElement.getVideoFeaturedProducts({ videoId, params });
 ```
+
+### Get A Video's Featured Products Meta Information
+
+```js
+const featuredProducts = vodElement.getVideoFeaturedProductsMeta({ videoId, params });
+```
+
+The `vodElement.getVideoFeaturedProductsMeta` method will return a Promise that resolves to a Video Featured Products Meta.
+A Video's featured products meta is used to get a products `highlighted timings`. These are the start & end times a product 
+is featured on the video.
+
+This methods accepts an object as its parameter with a required `videoId` field, along with the pagination `params` object.
+
+```js
+const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
+const params = { per_page: 1 };
+const featuredProducts = vodElement.getVideoFeaturedProductsMeta({ videoId, params });
+```
+
 ### Get VOD Categories (Paginated)
 
 ```js
@@ -289,7 +309,7 @@ This method along with pagination params, supports an optional `items_per_catego
 const params = { per_page: 99, page: 1, items_per_category: 999 };
 const categories = vodElement.getCategories({ params });
 ```
-### Get VOD Category
+### Get a VOD Category
 
 ```js
 const category = vodElement.getCategory(categoryId);

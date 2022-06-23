@@ -37,7 +37,7 @@ export default function (checkout): string {
             </div>
             <span class="qunatity">Quantity ${quantity}</span>
           </div>
-          <img src=${src} alt=${title} />
+          <img class="product-image" src=${src} alt=${title} />
           <button type="button" class="remove-item-button">
             <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.289 1.289 12.71 12.71M12.711 1.289 1.289 12.71" stroke="currentColor"/>

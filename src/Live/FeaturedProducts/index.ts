@@ -22,6 +22,7 @@ import {
   QUNAITITY_SELECTOR_NAME,
 } from './components/ProductDetails/constants';
 import {
+  BAG_OPEN_CLASS,
   PRODUCTS_TOGGLE_TEXT_CLASS,
   PRODUCT_DETAILS_FORM_NAME,
   REMOVE_ITEM_BUTTON_CLASS,
@@ -144,6 +145,7 @@ class FeaturedProducts {
       'beforeend',
       BagElement(fetchedCheckout),
     );
+    this.featuredProductsContainerElement.classList.add(BAG_OPEN_CLASS);
 
     this.featuredProductsContainerElement
       .querySelector(`.${SHOPIFY_BAG_CLASS} .${SHOPIFY_BAG_BACK_BUTTON_CLASS}`)
@@ -166,6 +168,10 @@ class FeaturedProducts {
   }
 
   async onBagOpen(): Promise<void> {
+    const ProductDetailsElement = this.featuredProductsContainerElement.querySelector(
+      `.${PRODUCT_DETAILS_CLASS}`,
+    );
+
     if (isEmpty(this.shopifyInstance)) {
       this.shopifyInstance = new Shopify(this.shopifyStoreDetails);
     }
@@ -177,12 +183,17 @@ class FeaturedProducts {
     }
 
     document.getElementById(PRODUCT_LIST_ELEMENT_ID).hidden = true;
+
+    if (!isNil(ProductDetailsElement)) {
+      ProductDetailsElement.remove();
+    }
   }
 
   onBagClose(): void {
     this.featuredProductsContainerElement
       .querySelector(`.${SHOPIFY_BAG_CLASS}`)
       .remove();
+    this.featuredProductsContainerElement.classList.remove(BAG_OPEN_CLASS);
 
     if (!isNil(this.textContainerElement)) {
       this.textContainerElement.innerHTML = ButtonTextElement();
@@ -370,13 +381,13 @@ class FeaturedProducts {
       );
   }
 
-  onCloseProductDetails(): void {
+  onCloseProductDetails = (): void => {
     if (!isNil(this.textContainerElement)) {
       this.textContainerElement.innerHTML = ButtonTextElement();
     }
     document.querySelector(`.${PRODUCT_DETAILS_CLASS}`).remove();
     document.getElementById(PRODUCT_LIST_ELEMENT_ID).hidden = false;
-  }
+  };
 }
 
 interface ContructorType {

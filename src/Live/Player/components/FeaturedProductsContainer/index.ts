@@ -26,6 +26,7 @@ export function renderButtonText(text?: string): string {
 export default function (): string {
   return `<input type="checkbox" id="minimize-products-checkbox" />
     <div
+      class="${FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID}"
       id="${FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID}" hidden>
       <label class="featured-products-btn" for="minimize-products-checkbox">
         <span role="img" class="icon">

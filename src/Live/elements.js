@@ -24,6 +24,9 @@ class Elements {
       getVideos: this.getVideos.bind(this),
       getVideo: this.getVideo.bind(this),
       getVideoFeaturedProducts: this.getVideoFeaturedProducts.bind(this),
+      getVideoFeaturedProductsMeta: this.getVideoFeaturedProductsMeta.bind(
+        this,
+      ),
       getCategories: this.getCategories.bind(this),
       getCategory: this.getCategory.bind(this),
       getPlaylistInfo: this.getPlaylistInfo.bind(this),
