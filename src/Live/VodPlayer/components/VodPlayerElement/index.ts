@@ -6,12 +6,28 @@ import featuredProductsContainer from '../../../Player/components/FeaturedProduc
 /**
  * Mounts VOD Player element template
  */
-export default function (vodData) {
+export default function (
+  vodData,
+  {
+    hideProducts,
+    hideDuration,
+  }: { hideProducts?: boolean; hideDuration?: boolean },
+): string {
   const { title, asset, preview_asset: previewAsset, duration } = vodData || {};
 
   const assetImage = asset.image?.full_size;
   const previewImage = previewAsset?.image?.full_size;
   const thumbnailImage = isEmpty(previewImage) ? assetImage : previewImage;
+
+  function renderDuration() {
+    return hideDuration
+      ? ''
+      : `<span class="duration">
+          ${formatDuration(
+            intervalToDuration({ start: 0, end: duration * 1000 }),
+          )}
+        </span>`;
+  }
 
   return `
     <div class="video-container">
@@ -19,7 +35,7 @@ export default function (vodData) {
           <video id="vod-player-video-element" class="video-js vjs-16-9 vjs-big-play-centered"
           playsInline="true"></video>
           <div class="vod-overlay-content-container"></div>
-          ${featuredProductsContainer()}
+          ${hideProducts ? '' : featuredProductsContainer()}
       </div>
       <div class="video-cover">
         ${
@@ -27,9 +43,7 @@ export default function (vodData) {
           `<img src=${thumbnailImage} alt="${title}" />`
         }
         <div class="cover-container">
-          <span class="duration">${formatDuration(
-            intervalToDuration({ start: 0, end: duration * 1000 }),
-          )}</span>
+          ${renderDuration()}
         </div>
         <button type="button" class="play-button">
           <svg width="17" height="18" viewBox="0 0 17 18" xmlns="http://www.w3.org/2000/svg">

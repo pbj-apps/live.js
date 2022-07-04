@@ -3,6 +3,7 @@ import { isEmpty, isNull } from 'lodash';
 import LivePlayer from './Player';
 import EmbedPlayer from './EmbedPlayer';
 import VodPlayer from './VodPlayer';
+import convertObjectToSnakeCase from '../utils/convertObjectToSnakeCase';
 
 /**
  * Live Elements
@@ -11,13 +12,20 @@ import VodPlayer from './VodPlayer';
 class Elements {
   constructor(liveInstance) {
     this.live = liveInstance;
-    this.list = this.getEpisodeList;
     this.activeStreams = this.getActiveStreams;
     this.currentShow = this.getCurrentShow;
     this.currentShowPreview = this.getCurrentShowPreview;
     this.episode = null;
     this.broadcast = null;
     this.featuredProducts = this.getFeaturedProducts;
+    this.episodes = {
+      list: this.getEpisodeList.bind(this),
+      featuredProducts: this.getFeaturedProductsResults.bind(this),
+      highlightedFeaturedProducts: this.getHighlightedFeaturedProducts.bind(
+        this,
+      ),
+      next: this.getNextEpisode.bind(this),
+    };
     this.vod = {
       embed: this.embedVod.bind(this),
       getItems: this.getVodItems.bind(this),
@@ -35,10 +43,13 @@ class Elements {
   }
 
   /**
-   * Gets all shows;
+   * Gets all episodes;
    */
-  getEpisodeList() {
-    return this.live.episodes.list();
+  async getEpisodeList({ params }) {
+    return this.live.episodes
+      .list({ params: convertObjectToSnakeCase(params) })
+      .then((response) => response.results)
+      .catch((err) => err);
   }
 
   /**
@@ -73,7 +84,43 @@ class Elements {
    * Get featured prodcuts;
    */
   getFeaturedProducts(episodeId) {
-    return this.live.episodes.featuredProducts({ episodeId });
+    return this.live.episodes.highlightedFeaturedProducts({ episodeId });
+  }
+
+  /**
+   * Get episode's featured prodcuts;
+   */
+  getFeaturedProductsResults({ episodeId, params }) {
+    return this.live.episodes
+      .featuredProducts({
+        episodeId,
+        params: convertObjectToSnakeCase(params),
+      })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  /**
+   * Get episode's highlighted featured prodcuts;
+   */
+  getHighlightedFeaturedProducts({ episodeId, params }) {
+    return this.live.episodes
+      .highlightedFeaturedProducts({
+        episodeId,
+        params: convertObjectToSnakeCase(params),
+      })
+      .then((response) => response.results)
+      .catch((err) => err);
+  }
+
+  /**
+   * Get next episode;
+   */
+  getNextEpisode() {
+    return this.live.episodes
+      .next()
+      .then((response) => response)
+      .catch((err) => err);
   }
 
   video(options) {

@@ -14,13 +14,14 @@ import {
 import Loader from './components/Loader';
 import ProductElement from '../Player/components/FeaturedProductsContainer/product';
 import { convertStringToSeconds } from '../../utils/duration';
+import { VodPlayerConfig } from '../../common/types';
 
 class VodPlayer {
   live: Live;
   containerElement;
   player;
   videoData;
-  options;
+  options: VodPlayerConfig;
   featuredProducts = [];
   visibleProducts = [];
 
@@ -33,7 +34,11 @@ class VodPlayer {
   }
 
   init(): void {
-    this.containerElement.innerHTML = VODPlayerElement(this.videoData);
+    const { hideProducts, hideDuration } = this.options;
+    this.containerElement.innerHTML = VODPlayerElement(this.videoData, {
+      hideProducts,
+      hideDuration,
+    });
     const videoElement = this.containerElement.querySelector(VIDEOJS_SELECTOR);
     this.player = videojs(videoElement, VOD_PLAYER_OPTIONS);
     this.player.src({
@@ -50,40 +55,42 @@ class VodPlayer {
   }
 
   renderFeaturedProducts(): void {
-    this.live.elements
-      .getVideoFeaturedProductsMeta({
-        videoId: this.videoData.id,
-        params: {
-          per_page: 1000,
-        },
-      })
-      .then((productsMetaData) => {
-        this.player.on('timeupdate', () => {
-          const currentTime = this.player.currentTime();
-          const updatedVisibleProductIdList = map(
-            filter(productsMetaData, (productData) => {
-              const { highlight_timings: highlightTimings } = productData;
-              const isTimingPresent =
-                !isEmpty(highlightTimings) && !isEmpty(highlightTimings[0]);
+    if (!this.options.hideProducts) {
+      this.live.elements
+        .getVideoFeaturedProductsMeta({
+          videoId: this.videoData.id,
+          params: {
+            per_page: 1000,
+          },
+        })
+        .then((productsMetaData) => {
+          this.player.on('timeupdate', () => {
+            const currentTime = this.player.currentTime();
+            const updatedVisibleProductIdList = map(
+              filter(productsMetaData, (productData) => {
+                const { highlight_timings: highlightTimings } = productData;
+                const isTimingPresent =
+                  !isEmpty(highlightTimings) && !isEmpty(highlightTimings[0]);
 
-              const startTime = isTimingPresent
-                ? convertStringToSeconds(highlightTimings[0].start_time)
-                : 0;
-              const endTime = isTimingPresent
-                ? convertStringToSeconds(highlightTimings[0].end_time)
-                : this.player.duration();
+                const startTime = isTimingPresent
+                  ? convertStringToSeconds(highlightTimings[0].start_time)
+                  : 0;
+                const endTime = isTimingPresent
+                  ? convertStringToSeconds(highlightTimings[0].end_time)
+                  : this.player.duration();
 
-              return (
-                currentTime >= startTime - PRE_FETCH_VALUE &&
-                currentTime <= endTime
-              );
-            }),
-            'product_id',
-          );
+                return (
+                  currentTime >= startTime - PRE_FETCH_VALUE &&
+                  currentTime <= endTime
+                );
+              }),
+              'product_id',
+            );
 
-          this.updateVisibleProducts(updatedVisibleProductIdList);
+            this.updateVisibleProducts(updatedVisibleProductIdList);
+          });
         });
-      });
+    }
   }
 
   updateVisibleProducts(updatedVisibleProductList: string[]): void {

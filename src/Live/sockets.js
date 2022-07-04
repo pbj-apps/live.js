@@ -60,7 +60,7 @@ class Sockets {
 
   // execuate callback when socket is ready.
   waitForConnection(callback) {
-    if (this.ws.readyState === 1) {
+    if (this.ws && this.ws.readyState === 1) {
       callback();
     } else {
       setTimeout(() => {

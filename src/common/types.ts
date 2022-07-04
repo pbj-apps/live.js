@@ -43,3 +43,18 @@ export interface ShopifyConfigType {
   domain: string;
   storefrontAccessToken: string;
 }
+
+export interface LivePlayerConfig {
+  hideCoverTitle?: boolean;
+  hideCoverDescription?: boolean;
+  hideTitle?: boolean;
+  hideDescription?: boolean;
+  hideLiveLogo?: boolean;
+  hideShoppingCart?: boolean;
+}
+
+export interface VodPlayerConfig {
+  hideProducts?: boolean;
+  hideDuration?: boolean;
+  closable?: boolean;
+}

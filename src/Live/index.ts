@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import { stringify } from 'query-string';
 
 import Elements from './elements';
 import DataSource from './dataSource';
@@ -42,7 +43,8 @@ class Live {
     this.sockets = new Sockets(this);
     this.episodes = this.dataSource.buildRepository({
       list: {
-        path: 'live-streams',
+        path: ({ params }) =>
+          `v1/episodes${isEmpty(params) ? '' : `?${stringify(params)}`}`,
         method: 'GET',
       },
       watch: {
@@ -66,8 +68,21 @@ class Live {
         method: 'GET',
       },
       featuredProducts: {
-        path: ({ episodeId }) =>
-          `v1/shopping/episodes/${episodeId}/highlighted-featured-products`,
+        path: ({ episodeId, params }) =>
+          `v1/shopping/episodes/${episodeId}/featured-products${
+            isEmpty(params) ? '' : `?${stringify(params)}`
+          }`,
+        method: 'GET',
+      },
+      highlightedFeaturedProducts: {
+        path: ({ episodeId, params }) =>
+          `v1/shopping/episodes/${episodeId}/highlighted-featured-products${
+            isEmpty(params) ? '' : `?${stringify(params)}`
+          }`,
+        method: 'GET',
+      },
+      next: {
+        path: 'v1/episodes/next',
         method: 'GET',
       },
     });

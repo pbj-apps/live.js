@@ -108,6 +108,32 @@ const LiveVideo = () => {
 In the background, this `embed()` method will create an iFrame that will injected into your html element, we also offer a lower level solution via the `live.elements.video()` method.
 
 
+### Mount Options
+
+The `embedPlayer.mount` method accepts an object as it's param. Within the main params object, it is possible to give a `channelId` as depicted in the examples above. It is also possible to to give an `options` object (within the main params object) with a number of boolean fields that can toggle player overlay content.
+
+| Field  | Default Value | Details |
+| ------------- | ------------- | ------------- |
+| hideCoverTitle  | false  | Toggles the Live cover title. |
+| hideCoverDescription  | false  | Toggles the Live cover description. |
+| hideLiveLogo  | false  | Toggles the Live logo on the Live Video Player. |
+| hideTitle  | false  | Toggles the Live episode title on the Live Video Player. |
+| hideDescription  | false  | Toggles the Live episode description on the Live Video Player. |
+| hideShoppingCart  | false  | Toggles the Live episode shopping cart/bag and featured products on the Live Video Player. |
+
+```js
+const liveElement = document.querySelector(#live-element);
+
+embedPlayer.mount(liveElement, {
+    channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+    options: {
+      hideLiveLogo: true,
+      hideTitle: true,
+      hideDescription: true,
+      hideShoppingCart: true,
+    },
+  });
+```
 
 ### Video Element
 ```js
@@ -161,6 +187,86 @@ embedPlayer.openFullscreen()
 videoElement.closeFullscreen()
 embedPlayer.closeFullscreen()
 ```
+__________________________________________________________
+
+### Episodes Element
+
+```js
+const episodesElement = live.elements.episodes;
+```
+This returns an object of serveral methods that can be used to fetch episodes data.
+#### Note: Methods marked as "Paginated" accept "page" and "perPage" as optional fields within the params object.
+
+Sample method call for a paginated mehtod.
+```js
+const params = { perPage: 99, page: 1 };
+const episodes = episodesElement.list({params});
+```
+
+### Get a list of Episodes (Paginated)
+
+```js
+const episodes = episodesElement.list();
+```
+
+The `episodesElement.list` method will return a Promise that resolves to an array of Episode data objects.
+
+This method along with pagination params, supports the following params.
+
+| Field  | Default Value | Details |
+| ------------- | ------------- | ------------- |
+| startingAt (ISO DateTime string)  | Start of user's day  | Helps in getting episodes having start datetime greater than `startingAt`.  |
+| daysAhead (number)  | 1  | Helps in getting episodes for number of days ahead. |
+
+Example:
+```js
+const params = { perPage: 99, page: 1, startingAt: new Date().toISOString(), daysAhead: 7 };
+const episodes = episodesElement.list({ params });
+```
+
+### Get a list of an Episode's Featured Products (Paginated)
+
+```js
+const featuredProducts = episodesElement.featuredProducts({episodeId});
+```
+
+The `episodesElement.featuredProducts` method will return a Promise that resolves to an array of Episode's Featured Products data.
+
+This methods accepts an object as its parameter with a required `episodeId` field, along with the pagination params object.
+
+Example:
+```js
+const episodeId = '7460531a-437d-4ddd-bf25-0a87536e1256a';
+const params = { per_page: 99, page: 1 };
+const featuredProducts = episodesElement.featuredProducts({ episodeId, params });
+```
+
+### Get a list of an Episode's Highlighted Featured Products (Paginated)
+
+```js
+const highlightedFeaturedProducts = episodesElement.highlightedFeaturedProducts({episodeId});
+```
+
+The `episodesElement.highlightedFeaturedProducts` method will return a Promise that resolves to an array of Episode's Highlighted Featured Products data.
+
+This methods accepts an object as its parameter with a required `episodeId` field, along with the pagination params object.
+
+Example:
+```js
+const episodeId = '7460531a-437d-4ddd-bf25-0a87536e1256a';
+const params = { per_page: 99, page: 1 };
+const highlightedFeaturedProducts = episodesElement.highlightedFeaturedProducts({ episodeId, params });
+```
+
+### Get Next or Ongoing episode
+
+```js
+const nextEpisode = episodesElement.next();
+```
+
+The `episodesElement.next` method will return a Promise that resolves to the data of the episode to go live next.
+
+__________________________________________________________
 
 ### VOD (Video on Demand) Element
 
@@ -186,15 +292,19 @@ The `vodElement.embed` method will mount a VOD player within a container element
 
 This methods accepts a params object with required `containerElement` and `videoId` fields and returns an object of the VodPlayer.
 
-Within the main params object, it is possible to give an optional `options` object with a boolean field with key `closable`.
-If `closable === true`, a close/cross icon will be rendered on top of the VOD player which when clicked will call the `dispose` method of the VOD player.
+Within the main params object, it is possible to give an optional `options` object with boolean fields that can toggle player overlay content.
+| Field  | Default Value | Details |
+| ------------- | ------------- | ------------- |
+| closable  | false  | Toggles a close/cross icon on top of the VOD player which when clicked calls the `dispose` method of the player.  |
+| hideProducts  | false  | Toggles the VOD featured prodcuts on the player.  |
+| hideDuration  | false  | Toggles the video duration details on the player. |
 
 The `dispose` method can also be called using the `vodPlayer` object.
 
 ```js
 const containerElement = document.getElementById('vod-container-element');
 const videoId = '7460531a-437d-4ddd-bf25-0a87536a406a';
-const options = { closable = true };
+const options = { closable = true, hideProducts = true };
 
 const vodPlayer = vodElement.embed({ containerElement, videoId, options });
 
@@ -336,4 +446,76 @@ This method accepts a required `playlistId` parameter.
 ```js
 const playlistId = 'ee6904d3-7b75-4039-8bab-24e15ac2632f';
 const playlistInfo = vodElement.getCategory(playlistId);
+```
+
+## Sockets
+
+### Socket Element
+```js
+const liveSockets = live.sockets;
+```
+
+The `liveSockets` helps to `join` and `subscribe` to a number of important realtime updates or events.
+
+### Supported joinable socket event types
+- join-episode-updates
+- join-episode-featured-product-updates
+
+#### Note: Event types are case-sensitive.
+
+### Joining `join-episode-updates` socket Event
+```js
+const EVENT_TYPE = 'join-episode-updates';
+const socketMessage = JSON.stringify({
+  command: EVENT_TYPE,
+  });
+  
+function callback(){
+  // Do something after joining the event!
+}
+  
+liveSockets.send(socketMessage, callback);
+
+```
+### Joining `join-episode-featured-product-updates` socket Event
+
+`join-episode-featured-product-updates` event type needs an `episode_id` field to join event updates of a particular episode.
+
+```js
+const EVENT_TYPE = 'join-episode-featured-product-updates';
+const EPISODE_ID = '0c2e035f-fd07-4390-921f-1e1e865803f7';
+const socketMessage = JSON.stringify({
+  command: EVENT_TYPE,
+  episode_id: EPISODE_ID,
+  });
+  
+function callback(){
+  // Do something after joining the event!
+}
+  
+liveSockets.send(socketMessage, callback);
+```
+
+### Supported subscribable socket event types
+- episode-status-update
+- episode-featured-product-updates
+
+#### Note: Event subscription only works if the corresponding parent event has been `joined`.
+
+| Subscribable Event  | Parent Event |
+| ------------------- | ------------- |
+| episode-status-update  | join-episode-updates  |
+| episode-featured-product-updates  | join-episode-featured-product-updates |
+
+### Subscribing to an Event
+```js
+const EVENT_TYPE = 'episode-status-update';
+
+function onUpdate(message){
+  // Do something with the message!
+  console.log(message)
+}
+
+liveSockets.subscribeToEvent(EVENT_TYPE, onUpdate);
+
 ```

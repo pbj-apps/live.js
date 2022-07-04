@@ -7,8 +7,20 @@ function connect(apiKey, options) {
   const embedVideoPlayer = live.elements.embed();
   var el = document.getElementById('embed-element');
   embedVideoPlayer.mount(el, {
-    channelId,
+    channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+    options: {
+      // Enable the below options to hide the overlay elements
+      // hideCoverTitle: true,
+      // hideCoverDescription: true,
+      // hideLiveLogo: true,
+      // hideTitle: true,
+      // hideDescription: true,
+      // hideShoppingCart: true,
+    },
   });
+
+  // Socket event joining and subscribing demo
+  connectSockets(live);
 
   document.getElementById('exposed-vod-methods-div').hidden = false;
   document
@@ -96,12 +108,72 @@ function connect(apiKey, options) {
       const player = await live.elements.vod.embed({
         containerElement: vodElement,
         videoId,
-        options: { closable: true },
+        options: {
+          closable: true,
+          // Enable below option to hide featured products and/or duartion
+          // hideProducts: true,
+          // hideDuration: true,
+        },
       });
       document
         .getElementById('dispose-vod-btn')
         .addEventListener('click', async function () {
           player.dispose();
+        });
+    });
+
+  document
+    .getElementById('get-episodes-list-btn')
+    .addEventListener('click', async function () {
+      const params = {
+        startingAt: new Date().toISOString(),
+        daysAhead: 7,
+        // pagination params 👇🏻
+        perPage: 1,
+        page: 1,
+      };
+
+      live.elements.episodes
+        .list({
+          params,
+        })
+        .then((episodes) => {
+          console.log({ episodes });
+        });
+    });
+
+  document
+    .getElementById('get-next-episode-btn')
+    .addEventListener('click', function () {
+      live.elements.episodes.next().then((nextEpisode) => {
+        console.log({ nextEpisode });
+      });
+    });
+
+  document
+    .getElementById('episode-products-btn')
+    .addEventListener('click', async function () {
+      const requestParams = {
+        episodeId: document.getElementById('episode-products-input').value,
+      };
+      await live.elements.episodes
+        .featuredProducts(requestParams)
+        .then((products) => {
+          console.log({ products });
+        });
+    });
+
+  document
+    .getElementById('episode-highlighted-products-btn')
+    .addEventListener('click', async function () {
+      const requestParams = {
+        episodeId: document.getElementById('episode-highlighted-products-input')
+          .value,
+      };
+      await live.elements.episodes
+        .highlightedFeaturedProducts(requestParams)
+        .then((products) => {
+          console.log({ products });
         });
     });
 }
@@ -116,3 +188,19 @@ document.getElementById('connect-btn').addEventListener('click', function () {
     channelId,
   });
 });
+
+function connectSockets(live) {
+  const liveSockets = live.sockets;
+
+  const socketMessage = JSON.stringify({
+    command: 'join-episode-updates',
+  });
+
+  liveSockets.send(socketMessage, subscribeToEvent);
+
+  function subscribeToEvent() {
+    liveSockets.subscribeToEvent('episode-status-update', (message) => {
+      console.log(message);
+    });
+  }
+}

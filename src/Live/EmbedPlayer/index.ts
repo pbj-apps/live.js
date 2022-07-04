@@ -1,6 +1,9 @@
-import { isNull, isNil } from 'lodash';
+import { isNull, isNil, join } from 'lodash';
+import { stringify } from 'query-string';
+
 import { DEFAULT_IFRAME_DOMAIN } from './constants';
 import config from '../../config';
+import convertObjectToSnakeCase from '../../utils/convertObjectToSnakeCase';
 
 /**
  * Live Stream Player
@@ -23,7 +26,6 @@ class EmbedPlayer {
    * Mounts Live Player
    */
   mount(element: HTMLElement, options: any) {
-    const { channelId } = options || {};
     const target = element;
 
     if (isNull(target)) {
@@ -43,7 +45,7 @@ class EmbedPlayer {
       this.options.iframeUrl ||
       `${iframeDomainOrigin}?api_key=${this.live.key}&environment=${
         this.live.options.environment
-      }${channelId && `&show_id=${channelId}`}`;
+      }&${this.getPlayerConfigParams(options)}`;
     this.playerOrigin = new URL(this.iframeUrl).origin;
 
     if (!this.iframe.src) {
@@ -92,6 +94,17 @@ class EmbedPlayer {
    */
   volume(volume: string) {
     this.postMessage({ message: 'volume', args: volume });
+  }
+
+  private getPlayerConfigParams(options) {
+    const { channelId, options: playerOptions } = options || {};
+
+    const params = {
+      show_id: channelId,
+      ...convertObjectToSnakeCase(playerOptions),
+    };
+
+    return stringify(params);
   }
 
   private createIframe(target) {

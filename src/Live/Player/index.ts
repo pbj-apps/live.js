@@ -30,6 +30,7 @@ import {
   LivePlayerState,
   ConfigOptions,
   PlayerInitiationOption,
+  LivePlayerConfig,
 } from '../../common/types';
 import { FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID } from './components/FeaturedProductsContainer/constants';
 import OverlayContent from './components/OverlayContent';
@@ -53,6 +54,7 @@ class LivePlayer {
   watchPromise: Promise<WatchEndpoint> | null;
   state: LivePlayerState;
   featuredProductsInstance: FeaturedProducts;
+  livePlayerConfig: LivePlayerConfig;
 
   constructor(liveInstance, options) {
     this.live = liveInstance;
@@ -67,7 +69,8 @@ class LivePlayer {
   /**
    * Mounts Live Player
    */
-  mount(element: any | null, { showId }) {
+  mount(element: any | null, { showId, livePlayerConfig }) {
+    this.livePlayerConfig = livePlayerConfig;
     if (!isUndefined(element)) {
       this.containerElement = element;
     }
@@ -94,8 +97,16 @@ class LivePlayer {
           this.live.elements
             .currentShowPreview(showId)
             .then((data) => {
+              const {
+                hideCoverTitle: hideTitle,
+                hideCoverDescription: hideDescription,
+              } = this.livePlayerConfig;
+
               this.state.episode = data;
-              this.containerElement.innerHTML = streamPreviewElement(data);
+              this.containerElement.innerHTML = streamPreviewElement(data, {
+                hideTitle,
+                hideDescription,
+              });
             })
             .catch((err) => {
               console.log('err', err);
@@ -157,7 +168,9 @@ class LivePlayer {
         });
 
       // Join Featuered Prodcuts Socket Updates
-      this.joinFeaturedProductsUpdates(id);
+      if (!this.livePlayerConfig.hideShoppingCart) {
+        this.joinFeaturedProductsUpdates(id);
+      }
     }
   }
 
@@ -338,9 +351,15 @@ class LivePlayer {
     const player = videojs.getPlayer(this.playerElement);
     player
       .el()
-      .insertAdjacentHTML('afterBegin', OverlayContent(this.state.episode));
+      .insertAdjacentHTML(
+        'afterBegin',
+        OverlayContent(this.state.episode, this.livePlayerConfig),
+      );
 
-    if (!isEmpty(this.state.featuredProducts)) {
+    if (
+      !isEmpty(this.state.featuredProducts) &&
+      !this.livePlayerConfig.hideShoppingCart
+    ) {
       this.initializeFeaturedProducts(this.state.featuredProducts);
     }
 
