@@ -68,7 +68,8 @@ So in your html, add:
       var embedPlayer = live.elements.embed()
        
       // Mount the player to the div#live-element in our html
-      embedPlayer.mount("#live-element", {
+      const liveElement = document.querySelector('#live-element');
+      embedPlayer.mount(liveElement, {
         // (Optional) Channel ID can be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
       })
@@ -84,6 +85,7 @@ import React, { useEffect } from 'react';
 import Live from '@pbj/live.js';
 
 const LiveVideo = () => {
+  const liveElementRef = useRef();
 
   useEffect(() => {
       var live = new Live("<Your API Key>", {
@@ -93,14 +95,14 @@ const LiveVideo = () => {
       // Create instance of the iframe embed
       var embedPlayer = live.elements.embed()
        
-      // Mount the player to the div#live-element in our html
-      embedPlayer.mount("#live-element", {
+      // Mount the player to the div in our html
+      embedPlayer.mount(liveElementRef.current, {
         // (Optional) Channel ID can be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
       })
   }, [])
 
-  return <div id="live-element"><div/>
+  return <div ref={liveElementRef}><div/>
 }
 
 ```
@@ -122,7 +124,7 @@ The `embedPlayer.mount` method accepts an object as it's param. Within the main 
 | hideShoppingCart  | false  | Toggles the Live episode shopping cart/bag and featured products on the Live Video Player. |
 
 ```js
-const liveElement = document.querySelector(#live-element);
+const liveElement = document.querySelector('#live-element');
 
 embedPlayer.mount(liveElement, {
     channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
