@@ -28,12 +28,8 @@ This script will expose a global `Live` class. Initiate the class with your orga
 
 ## 2. Initialize the LivePlayerSDK with your api key:
 ```
-const live = new Live("<Your API KEY>", {
-  environment: "dev|demo|production"
-})
+const live = new Live("<Your API KEY>")
 ```
-environment defaults to `production`
-
 
 # 🚀  Usage
 
@@ -60,9 +56,7 @@ So in your html, add:
     
     <script src="https://js.pbj.live/v1/sdk.js"></script>
     <script type="text/javascript">
-      var live = new Live("<Your API Key>", {
-        environment: 'demo'
-      });
+      var live = new Live("<Your API Key>");
       
       // Create instance of the iframe embed
       var embedPlayer = live.elements.embed()
@@ -72,6 +66,7 @@ So in your html, add:
       embedPlayer.mount(liveElement, {
         // (Optional) Channel ID can be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+        // More about channel ID in "Using different channels" section below.
       })
     </script>
   </body>
@@ -99,6 +94,7 @@ const LiveVideo = () => {
       embedPlayer.mount(liveElementRef.current, {
         // (Optional) Channel ID can be passed within an object, i.e. the second parameter for the mount method.
         channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+        // More about channel ID in "Using different channels" section below.
       })
   }, [])
 
@@ -108,6 +104,19 @@ const LiveVideo = () => {
 ```
 
 In the background, this `embed()` method will create an iFrame that will injected into your html element, we also offer a lower level solution via the `live.elements.video()` method.
+
+#### Using different channels
+Selecting a specific channel to show in the LIVE video player requires the channel_id option to be added to the options while calling the `embedPlayer.mount`.
+
+```js
+embedPlayer.mount(liveElement, {
+  channelId: '<Your channel ID>',
+})
+```
+To get the channel ID go to the dashboard and select a stream from the dropdown `Select Streams`. Once, you've selected this channel, copy the ID in the URL address bar. (URL format: https://pbj.live/dashboard/broadcast/Your-Channel-ID
+Example: <br/>
+URL: `https://pbj.live/dashboard/broadcast/31d319ae-919b-4ac2-bd10-f9a390c9aa81`<br/>
+Channel ID: `31d319ae-919b-4ac2-bd10-f9a390c9aa81`
 
 
 ### Mount Options

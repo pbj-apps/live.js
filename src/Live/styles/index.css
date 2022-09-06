@@ -65,6 +65,11 @@ h1 {
   position: relative;
 }
 
+.video-player video {
+  object-fit: cover;
+  object-position: center;
+}
+
 .video-js:hover > .video-overlay-content > .video-details,
 .video-js:hover .vod-overlay-content-container {
   opacity: 1;

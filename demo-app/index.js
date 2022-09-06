@@ -1,13 +1,11 @@
 function connect(apiKey, options) {
-  const { env, channelId } = options || {};
+  const { channelId } = options || {};
   const Live = window.Live;
-  const live = new Live(apiKey, {
-    environment: env || 'dev',
-  });
+  const live = new Live(apiKey);
   const embedVideoPlayer = live.elements.embed();
   var el = document.getElementById('embed-element');
   embedVideoPlayer.mount(el, {
-    channelId: '0c2e035f-fd07-4390-921f-1e1e865805f1',
+    channelId,
     options: {
       // Enable the below options to hide the overlay elements
       // hideCoverTitle: true,
@@ -181,10 +179,8 @@ function connect(apiKey, options) {
 document.getElementById('connect-btn').addEventListener('click', function () {
   document.getElementById('embed-element').innerHTML = '';
   const orgApiKey = document.getElementById('api-key-input').value;
-  const env = document.getElementById('env-input').value;
   const channelId = document.getElementById('channel-id-input').value;
   connect(orgApiKey, {
-    env,
     channelId,
   });
 });
