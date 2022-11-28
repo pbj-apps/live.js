@@ -9,7 +9,7 @@ export default function (episode) {
   return `
     <div class="video-player-container">
       <div class="video-player data-vjs-player">
-        <video id="player-video-element" class="video-js vjs-16-9 vjs-big-play-centered"></video>
+        <video id="player-video-element" class="video-js vjs-16-9 vjs-big-play-centered" playsinline></video>
       </div>
     </div>
   `;
