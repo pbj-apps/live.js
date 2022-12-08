@@ -33,6 +33,7 @@ export interface LivePlayerState {
   broadcast: WatchEndpoint | null;
   loading: boolean;
   featuredProducts: FeaturedProduct[];
+  loadingShopifyConfig: boolean;
 }
 
 export interface PlayerInitiationOption {

@@ -6,6 +6,7 @@ import {
   isNull,
   replace,
   isEqual,
+  isNil,
 } from 'lodash';
 import PlayerElement from './playerElement';
 import LoaderElement from './loaderElement';
@@ -270,22 +271,48 @@ class LivePlayer {
     );
   }
 
-  async initializeFeaturedProducts(products) {
-    const featuredProductsContainerElement = document.getElementById(
-      FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
-    );
-    const { shop_url: domain, access_token: storefrontAccessToken } =
-      (await this.live.elements.getShopifyConfig()) || {};
+  async updateFeaturedProductsContainer(): Promise<void> {
+    if (!this.state.loadingShopifyConfig) {
+      if (isEmpty(this.featuredProductsInstance)) {
+        this.state.loadingShopifyConfig = true;
+        const { shop_url: domain, access_token: storefrontAccessToken } =
+          (await this.live.elements.getShopifyConfig()) || {};
+        this.state.loadingShopifyConfig = false;
 
-    this.featuredProductsInstance = new FeaturedProducts({
-      playerContainerElement: this.containerElement,
-      featuredProductsContainerElement,
-      products,
-      shopifyStoreDetails: {
-        domain: replace(domain, 'https://', ''),
-        storefrontAccessToken,
-      },
-    });
+        /**
+         * Needs to be declared after `await` as by the time the promise resolves
+         * the container might have remounted and the const might have a dead reference.
+         */
+        const featuredProductsContainerElement = document.getElementById(
+          FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
+        );
+
+        if (!isNil(featuredProductsContainerElement)) {
+          this.featuredProductsInstance = new FeaturedProducts({
+            playerContainerElement: this.containerElement,
+            featuredProductsContainerElement,
+            products: this.state.featuredProducts,
+            shopifyStoreDetails: {
+              domain: replace(domain, 'https://', ''),
+              storefrontAccessToken,
+            },
+          });
+        }
+      } else {
+        const featuredProductsContainerElement = document.getElementById(
+          FEATURED_PRODUCTS_CONTAINER_ELEMENT_ID,
+        );
+
+        if (!isNil(featuredProductsContainerElement)) {
+          this.featuredProductsInstance.updateFeaturedProductsContainerElement(
+            featuredProductsContainerElement,
+          );
+          this.featuredProductsInstance.updateProducts(
+            this.state.featuredProducts,
+          );
+        }
+      }
+    }
   }
 
   /**
@@ -305,14 +332,8 @@ class LivePlayer {
         const {
           highlighted_featured_products: featuredProductsUpdate,
         } = message;
-
-        if (isEmpty(this.featuredProductsInstance)) {
-          this.initializeFeaturedProducts(featuredProductsUpdate);
-        } else {
-          this.featuredProductsInstance.updateProducts(featuredProductsUpdate);
-        }
-
         this.state.featuredProducts = featuredProductsUpdate;
+        this.updateFeaturedProductsContainer();
       },
     );
   }
@@ -360,7 +381,7 @@ class LivePlayer {
       !isEmpty(this.state.featuredProducts) &&
       !this.livePlayerConfig.hideShoppingCart
     ) {
-      this.initializeFeaturedProducts(this.state.featuredProducts);
+      this.updateFeaturedProductsContainer();
     }
 
     this.player = player;
@@ -477,6 +498,7 @@ class LivePlayer {
       episode: null,
       broadcast: null,
       featuredProducts: null,
+      loadingShopifyConfig: false,
     };
   }
 }

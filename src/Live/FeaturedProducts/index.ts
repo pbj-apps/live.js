@@ -53,7 +53,7 @@ class FeaturedProducts {
   constructor({
     playerContainerElement,
     featuredProductsContainerElement,
-    products = [],
+    products,
     shopifyStoreDetails,
   }: ContructorType) {
     this.playerContainerElement = playerContainerElement;
@@ -64,7 +64,18 @@ class FeaturedProducts {
     );
     this.isBagOpen = false;
     this.hasBagButtonRendered = false;
+    this.products = [];
     this.updateProducts(products);
+  }
+
+  updateFeaturedProductsContainerElement(
+    featuredProductsContainerElement: HTMLElement,
+  ): void {
+    this.featuredProductsContainerElement = featuredProductsContainerElement;
+    featuredProductsContainerElement.querySelector(
+      `#${PRODUCT_LIST_ELEMENT_ID}`,
+    ).innerHTML = '';
+    this.products = [];
   }
 
   changeContainerHiddenState(productList): void {
@@ -240,7 +251,13 @@ class FeaturedProducts {
   }
 
   removeProduct(unfeaturedProduct): void {
-    document.getElementById(`product-${unfeaturedProduct.id}`).remove();
+    const productElement = document.getElementById(
+      `product-${unfeaturedProduct.id}`,
+    );
+
+    if (!isNil(productElement)) {
+      productElement.remove();
+    }
   }
 
   updateBagButtonElement(itemsInBag: number): void {
