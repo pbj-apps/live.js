@@ -92,7 +92,7 @@ jobs:
       - build
       - run:
           name: Install Firebase Tools
-          command: npm install firebase-tools
+          command: npm install firebase-tools@12.9.1
       - run:
           name: Use correct environment
           command: ./node_modules/.bin/firebase use --add "$PBJ_FIREBASE_PROJECT_ID"
