@@ -2,7 +2,7 @@
  * Mounts Video Player element template
  * @param {Object} episode episode data for title/description
  */
-export default function (episode) {
+export default function playerElement(episode) {
   if (episode === null) {
     return null;
   }

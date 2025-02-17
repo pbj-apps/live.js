@@ -7,8 +7,8 @@ import {
 } from '../../constants';
 import {
   PRODUCT_DETAILS_CLASS,
-  QUNAITITY_SELECTOR_NAME,
-  QUNANTITY_LIMIT,
+  QUANTITY_SELECTOR_NAME,
+  QUANTITY_LIMIT,
 } from './constants';
 
 /**
@@ -20,7 +20,7 @@ export default function (
   isOutOfStock: boolean,
 ): string {
   function renderQuantityOptions() {
-    const options = times(QUNANTITY_LIMIT, (number) => number + 1);
+    const options = times(QUANTITY_LIMIT, (number) => number + 1);
 
     return join(
       map(
@@ -42,14 +42,14 @@ export default function (
             <div class="product-form-input">
               <label class="variant-label">Quantity</label>
               <div class="select-wrapper">
-                <select name="${QUNAITITY_SELECTOR_NAME}">
+                <select name="${QUANTITY_SELECTOR_NAME}">
                   ${renderQuantityOptions()}
                 </select>
               </div>
             </div>
             <p class="error-message" hidden>Please select all the options</p>
           </div>
-          <button type="submit">Add to Bag</button>
+          <button id="add-to-cart-button" type="submit">Add to Bag</button>
         </form>`;
     }
 

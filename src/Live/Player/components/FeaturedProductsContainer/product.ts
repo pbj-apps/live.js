@@ -5,7 +5,11 @@ import { MAX_PRODUCT_DESCRIPTION_LENGTH } from './constants';
  * Mounts Product Wrapper element template
  * @param {Object} product data.
  */
-export default function ({ product, useUrl, isOutOfStock }: ParamType): string {
+export default function productElement({
+  product,
+  useUrl,
+  isOutOfStock,
+}: ParamType): string {
   if (isEmpty(product)) {
     return null;
   }

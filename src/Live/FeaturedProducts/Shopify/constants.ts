@@ -1,1 +1,1 @@
-export const CHECKOUT_ID_KEY = 'live-shopify-checkout-id';
+export const CART_ID_KEY = 'live-shopify-cart-id';

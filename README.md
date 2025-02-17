@@ -530,3 +530,7 @@ function onUpdate(message){
 liveSockets.subscribeToEvent(EVENT_TYPE, onUpdate);
 
 ```
+---
+
+## Further Notes: 
+- Cart line items and variants are limited to the first 100 items.

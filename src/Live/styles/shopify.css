@@ -176,16 +176,23 @@
   flex-direction: column;
 }
 
-.shop-product-details form button {
+.shop-product-details form #add-to-cart-button {
   display: flex;
   justify-content: center;
   width: 100%;
   cursor: pointer;
-  background-color: var(--blue-dark) !important;
+  background-color: var(--blue-dark);
   color: white;
   font-size: 20px;
   font-weight: var(--blue-dark);
   padding: 22px;
+}
+
+.shop-product-details form #add-to-cart-button:disabled {
+  background-color: black;
+  color: white;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .shop-product-details .select-wrapper {

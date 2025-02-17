@@ -110,7 +110,7 @@ class LivePlayer {
               });
             })
             .catch((err) => {
-              console.log('err', err);
+              console.error('err', err);
             });
         } else {
           if (count >= 1) {
@@ -137,7 +137,7 @@ class LivePlayer {
         }
       })
       .catch((err) => {
-        console.log('Error', err);
+        console.error('Error', err);
         const error = JSON.stringify(err);
         this.containerElement.innerHTML = errorElement(error);
       });
@@ -165,7 +165,7 @@ class LivePlayer {
           this.updatePlayer();
         })
         .catch((err) => {
-          console.log('err', err);
+          console.error('err', err);
         });
 
       // Join Featuered Prodcuts Socket Updates
@@ -232,7 +232,7 @@ class LivePlayer {
         }
       })
       .catch((err) => {
-        console.log('Error', err);
+        console.error('Error', err);
         const error = JSON.stringify(err);
         this.containerElement.innerHTML = errorElement(error);
       });

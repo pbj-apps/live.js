@@ -1,4 +1,4 @@
-import { isNull, isNil, join } from 'lodash';
+import { isNull, isNil } from 'lodash';
 import { stringify } from 'query-string';
 
 import { DEFAULT_IFRAME_DOMAIN } from './constants';

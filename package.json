@@ -1,12 +1,12 @@
 {
   "name": "@pbj/live.js",
-  "version": "0.0.17",
+  "version": "0.1.0",
   "main": "dist/sdk.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pbj-apps/live.js.git"
   },
-  "author": "pbjlive <hello@pbj.live>",
+  "author": "Build with Studio <hello@buildwithstudio.com>",
   "license": "MIT",
   "scripts": {
     "start": "webpack --watch",
@@ -60,7 +60,9 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
+    "@shopify/storefront-api-client": "^1.0.4",
     "@videojs/vhs-utils": "^2.2.1",
+    "currency-symbol-map": "^5.1.0",
     "date-fns": "^2.27.0",
     "dotenv-webpack": "^4.0.0",
     "eslint": "^7.16.0",
@@ -69,7 +71,6 @@
     "lodash": "^4.17.21",
     "pre-commit": "^1.2.2",
     "query-string": "^7.1.1",
-    "shopify-buy": "^2.14.0",
     "source-map-loader": "^2.0.0",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3"

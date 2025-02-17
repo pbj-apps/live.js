@@ -1,8 +1,15 @@
-import Client = require('shopify-buy');
-import { isEmpty, omit } from 'lodash';
+import { createStorefrontApiClient } from '@shopify/storefront-api-client';
+import { isEmpty } from 'lodash';
 
-import { CHECKOUT_ID_KEY } from './constants';
+import { CART_ID_KEY } from './constants';
 import { ShopifyConfigType } from '../../../common/types';
+import {
+  createCartMutation,
+  addLineItemsMutation,
+  removeLineItemsMutation,
+  getProductQuery,
+  getCartQuery,
+} from './operations';
 
 class Shopify {
   client: any;
@@ -14,7 +21,11 @@ class Shopify {
 
   buildClient({ domain, storefrontAccessToken }: ShopifyConfigType): any {
     if (!isEmpty(domain) && !isEmpty(storefrontAccessToken)) {
-      this.client = Client.buildClient({ domain, storefrontAccessToken });
+      this.client = createStorefrontApiClient({
+        storeDomain: domain,
+        apiVersion: '2024-04',
+        publicAccessToken: storefrontAccessToken,
+      });
       return this.client;
     }
     throw new Error('Invalid Shopify Config.');
@@ -26,53 +37,108 @@ class Shopify {
     }
   }
 
-  async getCheckoutId(): Promise<string> {
-    const checkoutId = sessionStorage.getItem(CHECKOUT_ID_KEY);
+  async getCartId(): Promise<string> {
+    const cartId = sessionStorage.getItem(CART_ID_KEY);
 
-    if (checkoutId) {
-      return checkoutId;
+    if (cartId) {
+      return cartId;
     }
 
-    const { id: newCheckoutId } = await this.client.checkout.create();
-    sessionStorage.setItem(CHECKOUT_ID_KEY, newCheckoutId);
-    return newCheckoutId;
+    const { data, errors } = await this.client.request(createCartMutation);
+    if (errors) {
+      console.error(errors.message);
+      return;
+    } else {
+      const { cartCreate } = data;
+      sessionStorage.setItem(CART_ID_KEY, cartCreate.cart.id);
+      return cartCreate.cart.id;
+    }
   }
 
   async getProduct(id: string): Promise<any> {
     this.checkClient();
-    return await this.client.product.fetch(`gid://shopify/Product/${id}`);
+    const { data, errors } = await this.client.request(getProductQuery({ id }));
+    if (errors) {
+      console.error(errors.message);
+      return;
+    }
+    if (data) {
+      return data.product;
+    }
+    if (!data && !errors) {
+      throw new Error('Shopify product request failed.');
+    }
+  }
+
+  getSelectedVariant({ product, variantOptions }) {
+    const { variants: productVariants } = product;
+    const selectedVariant =
+      productVariants.length === 1
+        ? productVariants.nodes[0]
+        : productVariants.nodes.find((variant) => {
+            return variant.selectedOptions.every((option) => {
+              return variantOptions[option.name] === option.value;
+            });
+          });
+
+    if (!selectedVariant) {
+      throw new Error('Variant not found.');
+    }
+
+    return selectedVariant;
   }
 
   async addProductToBag({ product, variantOptions }): Promise<any> {
     this.checkClient();
-
-    const checkoutId = await this.getCheckoutId();
-    const { variants: productVariants } = product;
-    const selectedVariant =
-      productVariants.length === 1
-        ? productVariants[0]
-        : this.client.product.helpers.variantForOptions(
-            product,
-            omit(variantOptions, 'quantity'),
-          );
-
-    return await this.client.checkout.addLineItems(checkoutId, {
-      variantId: selectedVariant.id,
-      quantity: variantOptions.quantity,
+    const cartId = await this.getCartId();
+    const selectedVariant = this.getSelectedVariant({
+      product,
+      variantOptions,
     });
+
+    const { data, errors } = await this.client.request(
+      addLineItemsMutation({
+        cartId,
+        selectedVariantId: selectedVariant.id,
+        quantity: variantOptions.quantity,
+      }),
+    );
+    if (errors) {
+      console.error(errors.message);
+      return;
+    } else {
+      return data.cartLinesAdd.cart;
+    }
   }
 
-  async getCheckout(): Promise<any> {
+  async getCart(): Promise<any> {
     this.checkClient();
-    const checkoutId = await this.getCheckoutId();
-    return await this.client.checkout.fetch(checkoutId);
+    const cartId = await this.getCartId();
+
+    const { data, errors } = await this.client.request(
+      getCartQuery({ cartId }),
+    );
+    if (errors) {
+      console.error(errors.message);
+      return;
+    } else {
+      return data.cart;
+    }
   }
 
   async deleteCheckoutLineItem(id: string): Promise<any> {
     this.checkClient();
-    const checkoutId = await this.getCheckoutId();
+    const cartId = await this.getCartId();
 
-    return await this.client.checkout.removeLineItems(checkoutId, [id]);
+    const { data, errors } = await this.client.request(
+      removeLineItemsMutation({ cartId, lineId: id }),
+    );
+    if (errors) {
+      console.error(errors.message);
+      return;
+    } else {
+      return data.cartLinesRemove.cart;
+    }
   }
 }
 
